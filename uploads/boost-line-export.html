@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#0a0d0b" />
+  <link rel="icon" href="data:," />
+  <title>Boost Line — кредитный консалтинг</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg:#f5f7f5;
+      --surface:#ffffff;
+      --ink:#0b0e0c;
+      --muted:#4f5d54;
+      --line:#d7ded9;
+      --green:#20d36b;
+      --green-dark:#087a3b;
+      --green-soft:#daf8e6;
+      --black:#0a0d0b;
+      --hero-ink:#f7fff9;
+      --hero-muted:#b8c5bc;
+      --shadow:0 22px 60px rgba(9,24,15,.12);
+      --radius-lg:28px;
+      --radius-md:18px;
+      --focus:#0a8d45;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:#080b09;
+        --surface:#111612;
+        --ink:#f3f8f4;
+        --muted:#aebbb1;
+        --line:#2b352e;
+        --green:#31e479;
+        --green-dark:#83f0aa;
+        --green-soft:#123c23;
+        --black:#050706;
+        --shadow:0 22px 60px rgba(0,0,0,.35);
+        --focus:#64f095;
+      }
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:"Manrope",sans-serif;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+    }
+    button,input { font:inherit; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    a { color:inherit; }
+    :focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+    .shell { width:min(1180px,calc(100% - 40px)); margin-inline:auto; }
+    .topbar {
+      position:absolute; z-index:3; top:0; left:0; right:0;
+      height:82px; display:flex; align-items:center;
+    }
+    .topbar .shell { display:flex; justify-content:flex-end; align-items:center; gap:30px; }
+    .phone-link { color:#f0f8f2; text-decoration:none; font-size:14px; font-weight:800; white-space:nowrap; }
+    .phone-link:hover { color:var(--green); }
+    .instagram-link { width:38px; height:38px; border:1px solid #486053; border-radius:50%; display:grid; place-items:center; color:#f0f8f2; text-decoration:none; flex:0 0 auto; }
+    .instagram-link:hover { color:var(--green); border-color:var(--green); }
+    .instagram-link svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2; }
+    .nav { display:flex; gap:26px; align-items:center; }
+    .nav a { color:#d5dfd8; text-decoration:none; font-size:14px; font-weight:600; }
+    .nav a:hover { color:#fff; }
+    .nav-cta { border:1px solid #486053; padding:11px 17px; border-radius:999px; }
+    .hero {
+      position:relative; min-height:700px; overflow:hidden;
+      background:var(--black); color:var(--hero-ink); display:flex; align-items:center;
+      padding:126px 0 78px;
+    }
+    .hero::before {
+      content:""; position:absolute; width:620px; height:620px; border-radius:50%;
+      right:-210px; top:-265px; border:110px solid rgba(32,211,107,.11);
+    }
+    .hero::after {
+      content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+      background:linear-gradient(90deg,transparent,var(--green),transparent);
+    }
+    .hero-momentum { position:absolute; z-index:0; inset:82px 0 0; pointer-events:none; overflow:hidden; opacity:.42; }
+    .hero-momentum svg { position:absolute; left:-8%; bottom:-5%; width:116%; height:92%; }
+    .momentum-grid line { stroke:#213027; stroke-width:1; stroke-dasharray:3 11; }
+    .momentum-path { fill:none; stroke:var(--green); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1040; stroke-dashoffset:1040; filter:drop-shadow(0 0 8px rgba(32,211,107,.4)); animation:score-rise 5.8s cubic-bezier(.55,.08,.2,1) infinite; }
+    .momentum-point { fill:var(--green); stroke:#07110b; stroke-width:5; opacity:0; animation:point-pop 5.8s ease-out infinite; }
+    .momentum-point:nth-of-type(2) { animation-delay:.45s; }
+    .momentum-point:nth-of-type(3) { animation-delay:1s; }
+    .momentum-point:nth-of-type(4) { animation-delay:1.55s; }
+    .momentum-arrow { fill:none; stroke:var(--green); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:0; animation:arrow-pop 5.8s ease-out infinite; }
+    @keyframes score-rise {
+      0%,8% { stroke-dashoffset:1040; opacity:.15; }
+      48%,82% { stroke-dashoffset:0; opacity:1; }
+      100% { stroke-dashoffset:0; opacity:.05; }
+    }
+    @keyframes point-pop {
+      0%,22% { opacity:0; transform:scale(.4); transform-origin:center; }
+      38%,82% { opacity:1; transform:scale(1); }
+      100% { opacity:0; transform:scale(1.35); }
+    }
+    @keyframes arrow-pop {
+      0%,42% { opacity:0; transform:translate(-14px,14px); }
+      55%,82% { opacity:1; transform:translate(0,0); }
+      100% { opacity:0; transform:translate(8px,-8px); }
+    }
+    .hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:72px; align-items:center; }
+    .eyebrow { display:flex; align-items:center; gap:10px; margin:0 0 20px; color:#b9c7bd; font-size:13px; font-weight:700; letter-spacing:.04em; }
+    .eyebrow::before { content:""; width:27px; height:2px; background:var(--green); }
+    h1 { font-size:clamp(43px,6.1vw,76px); line-height:.98; letter-spacing:-.055em; margin:0; max-width:790px; font-weight:800; }
+    .hero-solution { color:var(--green); }
+    .hero-copy { margin:27px 0 0; color:var(--hero-muted); max-width:630px; font-size:18px; line-height:1.7; }
+    .hero-actions { display:flex; gap:13px; margin-top:34px; flex-wrap:wrap; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 23px; border-radius:999px; border:1px solid transparent; text-decoration:none; font-weight:800; font-size:14px; cursor:pointer; transition:background .2s,color .2s,border-color .2s; }
+    .button-primary { background:var(--green); color:#041008; }
+    .button-primary:hover { background:#50eb8b; }
+    .button-ghost { color:#eff8f1; border-color:#425047; background:transparent; }
+    .button-ghost:hover { border-color:#819087; }
+    .signal {
+      background:#111713; border:1px solid #27342b; box-shadow:0 30px 90px rgba(0,0,0,.35);
+      border-radius:32px; padding:30px; position:relative; overflow:hidden;
+    }
+    .signal::after { content:""; position:absolute; width:130px; height:130px; border-radius:50%; background:rgba(32,211,107,.12); filter:blur(24px); right:-35px; bottom:-45px; }
+    .signal-label { display:flex; justify-content:space-between; align-items:center; color:#91a096; font:500 11px/1.3 "IBM Plex Mono",monospace; text-transform:uppercase; letter-spacing:.09em; }
+    .signal-dot { width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 6px rgba(32,211,107,.11); }
+    .score-ring { width:196px; height:196px; margin:25px auto; position:relative; }
+    .score-ring svg { width:100%; height:100%; display:block; }
+    .tick { fill:#263029; transition:fill .18s, filter .18s; }
+    .tick.on { fill:var(--green); filter:drop-shadow(0 0 5px rgba(32,211,107,.65)); }
+    .score-copy strong { transition:opacity .2s; }
+    .signal-row { transition:opacity .4s; }
+    .signal-row.off { opacity:.38; }
+    .signal-row.off .signal-check { background:#2d3a31; color:#5d6d62; }
+    .signal-check { transition:background .3s,color .3s,box-shadow .3s; }
+    .signal-row:not(.off) .signal-check { box-shadow:0 0 0 4px rgba(32,211,107,.15); }
+    .score-copy { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; width:112px; }
+    .score-copy strong { display:block; font-size:32px; white-space:nowrap; line-height:1; letter-spacing:-.06em; }
+    .score-copy span { display:block; color:#98a59c; font-size:11px; line-height:1.3; margin-top:6px; }
+    .signal-rows { margin-top:19px; border-top:1px solid #27342b; padding-top:18px; display:grid; gap:12px; }
+    .signal-row { display:grid; grid-template-columns:16px 1fr auto; gap:10px; align-items:center; font-size:13px; color:#d7e0d9; }
+    .signal-check { width:16px; height:16px; border-radius:50%; background:var(--green); color:#061009; display:grid; place-items:center; font-size:11px; font-weight:900; }
+    .signal-row em { color:#8c9b91; font-style:normal; font:500 10px/1 "IBM Plex Mono",monospace; }
+    .trust { background:var(--surface); border-bottom:1px solid var(--line); }
+    .trust-grid { min-height:96px; display:grid; grid-template-columns:1.3fr repeat(3,1fr); align-items:center; }
+    .trust-intro { font-size:13px; color:var(--muted); font-weight:700; }
+    .trust-item { padding-left:26px; border-left:1px solid var(--line); }
+    .trust-item strong { display:block; font-size:14px; }
+    .trust-item span { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+    .credit-check { padding:30px 0 0; }
+    .credit-check-card {
+      display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:center;
+      padding:28px 30px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    }
+    .credit-check-copy h2 { margin:0; font-size:clamp(23px,2.5vw,32px); letter-spacing:-.035em; line-height:1.15; }
+    .credit-check-copy p { margin:8px 0 0; color:var(--muted); font-size:14px; }
+    .partner-badge { width:max-content; max-width:100%; display:inline-flex; align-items:center; gap:9px; margin-bottom:14px; padding:8px 12px; border-radius:999px; background:var(--green-soft); color:var(--green-dark); font-size:12px; font-weight:800; }
+    .partner-badge svg { width:17px; height:17px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2.2; }
+    .credit-check-action { display:grid; justify-items:end; gap:8px; }
+    .credit-check-note { color:var(--muted); font-size:10px; text-align:right; }
+    .cost-example { padding:82px 0 102px; }
+    .cost-panel { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:38px; box-shadow:var(--shadow); }
+    .cost-head { display:flex; justify-content:space-between; align-items:flex-end; gap:42px; margin-bottom:34px; }
+    .cost-head h2 { margin:0; max-width:690px; font-size:clamp(32px,4vw,52px); line-height:1.06; letter-spacing:-.045em; }
+    .cost-head p { margin:0; max-width:390px; color:var(--muted); font-size:14px; }
+    .cost-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .cost-card { min-width:0; padding:27px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--bg); }
+    .cost-card-head { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; padding-bottom:20px; border-bottom:1px solid var(--line); }
+    .cost-card h3 { margin:0; font-size:23px; letter-spacing:-.03em; }
+    .cost-card-head span { color:var(--muted); font-size:11px; text-align:right; }
+    .cost-scenarios { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+    .cost-scenario { padding:15px; border-radius:12px; background:var(--surface); border:1px solid var(--line); }
+    .cost-scenario.better { border-color:var(--green); background:var(--green-soft); }
+    .cost-scenario small { display:block; min-height:34px; color:var(--muted); font-size:10px; line-height:1.4; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+    .cost-scenario strong { display:block; margin-top:8px; font:500 19px/1.2 "IBM Plex Mono",monospace; }
+    .cost-scenario span { display:block; margin-top:6px; color:var(--muted); font-size:11px; line-height:1.45; }
+    .cost-loss { margin:13px 0 0; padding:17px; border-radius:12px; background:var(--black); color:var(--hero-ink); }
+    .cost-loss span { display:block; color:var(--hero-muted); font-size:10px; }
+    .cost-loss strong { display:block; margin-top:4px; color:var(--green); font-size:clamp(20px,2.3vw,27px); line-height:1.2; letter-spacing:-.03em; }
+    .cost-foot { display:flex; justify-content:space-between; align-items:center; gap:28px; margin-top:25px; }
+    .cost-note { margin:0; max-width:760px; color:var(--muted); font-size:10px; line-height:1.6; }
+    section { padding:102px 0; }
+    .section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:40px; margin-bottom:47px; }
+    .section-head h2 { margin:0; font-size:clamp(32px,4vw,52px); line-height:1.06; letter-spacing:-.045em; max-width:680px; }
+    .section-head p { margin:0; max-width:410px; color:var(--muted); font-size:15px; }
+    .issues { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); }
+    .issue { padding:30px 25px 28px 0; min-height:190px; border-bottom:1px solid var(--line); position:relative; }
+    .issue + .issue { border-left:1px solid var(--line); padding-left:25px; }
+    .issue-num { color:var(--green-dark); font:500 12px/1 "IBM Plex Mono",monospace; }
+    .issue h3 { font-size:18px; letter-spacing:-.02em; margin:35px 0 9px; }
+    .issue p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .process { background:var(--black); color:var(--hero-ink); }
+    .process .section-head p { color:var(--hero-muted); }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .step { min-height:300px; padding:29px; background:#111713; border:1px solid #27342b; border-radius:var(--radius-md); display:flex; flex-direction:column; }
+    .step-top { display:flex; justify-content:space-between; align-items:center; }
+    .step-num { font:500 12px/1 "IBM Plex Mono",monospace; color:#9aa79e; }
+    .step-icon { width:42px; height:42px; border-radius:50%; border:1px solid #344139; display:grid; place-items:center; color:var(--green); }
+    .step h3 { font-size:23px; margin:auto 0 12px; letter-spacing:-.03em; }
+    .step p { color:#aebbb2; font-size:14px; margin:0; line-height:1.7; }
+    .why { padding-bottom:36px; }
+    .why-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); }
+    .why-item { min-height:238px; padding:30px 25px 26px 0; border-bottom:1px solid var(--line); display:flex; flex-direction:column; }
+    .why-item + .why-item { border-left:1px solid var(--line); padding-left:25px; }
+    .why-value { color:var(--green-dark); font-size:clamp(34px,4vw,50px); font-weight:800; line-height:1; letter-spacing:-.05em; }
+    .why-item h3 { margin:auto 0 9px; font-size:17px; letter-spacing:-.02em; }
+    .why-item p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .principles { display:grid; grid-template-columns:1fr 1fr; gap:75px; align-items:center; }
+    .principles h2 { font-size:clamp(34px,4.4vw,56px); line-height:1.04; letter-spacing:-.05em; margin:0 0 23px; }
+    .principles > div > p { color:var(--muted); max-width:520px; margin:0; font-size:16px; line-height:1.75; }
+    .principle-list { border-top:1px solid var(--line); }
+    .principle { display:grid; grid-template-columns:42px 1fr; gap:18px; padding:23px 0; border-bottom:1px solid var(--line); }
+    .principle b { width:30px; height:30px; border-radius:50%; background:var(--green-soft); color:var(--green-dark); display:grid; place-items:center; font-size:13px; }
+    .principle strong { display:block; font-size:16px; }
+    .principle span { display:block; color:var(--muted); font-size:13px; margin-top:5px; }
+    .reviews { padding-top:32px; }
+    .reviews-frame { overflow:hidden; }
+    .reviews-track { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .review-card { min-width:0; min-height:270px; padding:26px; border:1px solid var(--line); background:var(--surface); border-radius:var(--radius-md); display:flex; flex-direction:column; }
+    .review-card[hidden] { display:none; }
+    .review-card-top { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .review-template { color:var(--green-dark); font:500 11px/1.3 "IBM Plex Mono",monospace; text-transform:uppercase; letter-spacing:.07em; }
+    .review-number { color:var(--muted); font:500 11px/1 "IBM Plex Mono",monospace; }
+    .review-card h3 { margin:38px 0 10px; font-size:20px; line-height:1.25; letter-spacing:-.025em; }
+    .review-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
+    .review-permission { margin-top:auto; padding-top:22px; font-size:11px; color:var(--muted); border-top:1px solid var(--line); }
+    .reviews-controls { display:flex; align-items:center; justify-content:space-between; gap:22px; margin-top:24px; }
+    .reviews-progress { color:var(--muted); font:500 12px/1 "IBM Plex Mono",monospace; }
+    .reviews-buttons { display:flex; gap:9px; }
+    .carousel-btn { width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); display:grid; place-items:center; cursor:pointer; font-size:19px; }
+    .carousel-btn:hover:not(:disabled) { border-color:var(--green-dark); color:var(--green-dark); }
+    .carousel-btn:disabled { opacity:.38; cursor:default; }
+    .faq-wrap { display:grid; grid-template-columns:.68fr 1.32fr; gap:70px; }
+    .faq-wrap h2 { font-size:clamp(34px,4vw,50px); margin:0; letter-spacing:-.045em; line-height:1.08; }
+    .faq-wrap > div:first-child p { color:var(--muted); margin:17px 0 0; font-size:14px; max-width:310px; }
+    .faq { border-top:1px solid var(--line); }
+    .faq-item { border-bottom:1px solid var(--line); }
+    .faq-q { width:100%; background:none; border:0; color:var(--ink); display:grid; grid-template-columns:1fr 30px; gap:20px; text-align:left; padding:22px 0; cursor:pointer; font-weight:700; }
+    .faq-q span:last-child { width:28px; height:28px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; transition:transform .2s; }
+    .faq-item.open .faq-q span:last-child { transform:rotate(45deg); }
+    .faq-a { display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease; }
+    .faq-a > div { overflow:hidden; }
+    .faq-a p { margin:0; padding:0 42px 22px 0; color:var(--muted); font-size:14px; line-height:1.7; }
+    .faq-item.open .faq-a { grid-template-rows:1fr; }
+    .apply { padding-top:30px; }
+    .apply-card { background:var(--green); color:#051008; border-radius:var(--radius-lg); padding:54px; display:grid; grid-template-columns:.9fr 1.1fr; gap:70px; box-shadow:var(--shadow); }
+    .apply-copy h2 { font-size:clamp(34px,4vw,52px); line-height:1.02; letter-spacing:-.05em; margin:0 0 18px; }
+    .apply-copy p { margin:0; color:#164e2e; font-size:15px; line-height:1.7; max-width:430px; }
+    .apply-note { margin-top:27px; font-size:12px; color:#1f5535; display:flex; align-items:center; gap:9px; }
+    .apply-note::before { content:""; width:8px; height:8px; background:#051008; border-radius:50%; }
+    .form { display:grid; gap:12px; }
+    .field { display:grid; gap:7px; }
+    .field label,.fieldset legend { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+    .field input { width:100%; height:50px; border:1px solid rgba(5,16,8,.24); background:rgba(255,255,255,.69); color:#07100a; border-radius:11px; padding:0 15px; outline:none; }
+    .field input:focus { border-color:#07100a; box-shadow:0 0 0 3px rgba(5,16,8,.12); }
+    .field input::placeholder { color:#4f735d; }
+    .phone-field { display:grid; grid-template-columns:auto 1fr; align-items:center; height:50px; border:1px solid rgba(5,16,8,.24); background:rgba(255,255,255,.69); border-radius:11px; overflow:hidden; }
+    .phone-field:focus-within { border-color:#07100a; box-shadow:0 0 0 3px rgba(5,16,8,.12); }
+    .phone-prefix { height:100%; display:grid; place-items:center; padding:0 0 0 15px; color:#07100a; font-weight:700; }
+    .phone-field input { height:48px; border:0; background:transparent; border-radius:0; padding-left:8px; }
+    .phone-field input:focus { box-shadow:none; }
+    .consent { display:grid; grid-template-columns:20px 1fr; gap:10px; align-items:start; margin-top:4px; cursor:pointer; }
+    .consent input { width:18px; height:18px; margin:2px 0 0; accent-color:#07100a; }
+    .consent span { color:#174d2d; font-size:11px; line-height:1.55; }
+    .consent strong { color:#07100a; }
+    .whatsapp-float { position:fixed; z-index:10; right:max(20px,env(safe-area-inset-right)); bottom:max(22px,env(safe-area-inset-bottom)); width:58px; height:58px; border-radius:50%; display:grid; place-items:center; background:#25d366; color:#062d16; box-shadow:0 12px 30px rgba(4,44,20,.3); transition:background .2s,transform .2s; }
+    .whatsapp-float:hover { background:#4be382; transform:translateY(-2px); }
+    .whatsapp-float svg { width:30px; height:30px; fill:currentColor; }
+    .fieldset { border:0; padding:0; margin:0; }
+    .chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+    .chip { border:1px solid rgba(5,16,8,.28); color:#0a1a10; background:transparent; border-radius:999px; padding:9px 12px; font-size:12px; cursor:pointer; }
+    .chip.selected { background:#08110b; color:#fff; border-color:#08110b; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .submit { width:100%; min-height:52px; border:0; border-radius:11px; background:#07100a; color:#f3fff6; font-weight:800; cursor:pointer; margin-top:3px; }
+    .submit:hover { background:#183222; }
+    .apply-free-note { margin:2px 0 0; color:#174d2d; font-size:12px; line-height:1.55; font-weight:700; text-align:center; }
+    .form-status { display:none; background:rgba(255,255,255,.62); border-radius:12px; padding:14px; font-size:13px; }
+    .form-status.show { display:block; }
+    .form-status strong { display:block; margin-bottom:5px; }
+    .status-actions { display:flex; gap:8px; margin-top:11px; }
+    .mini-btn { border:1px solid rgba(5,16,8,.26); background:transparent; color:#07100a; border-radius:8px; padding:8px 10px; cursor:pointer; font-weight:700; font-size:12px; }
+
+    .consent a { color:#07100a; font-weight:800; text-underline-offset:2px; }
+    .disclaimer { padding:30px 0 45px; color:var(--muted); font-size:11px; line-height:1.65; max-width:850px; }
+    .mobile-cta { display:none; }
+    @media (max-width:900px) {
+      .hero { min-height:auto; }
+      .hero-grid { grid-template-columns:1fr; gap:45px; }
+      .signal { max-width:520px; }
+      .trust-grid { grid-template-columns:repeat(3,1fr); padding:20px 0; row-gap:18px; }
+      .trust-intro { grid-column:1/-1; }
+      .trust-item:first-of-type { border-left:0; padding-left:0; }
+      .issues { grid-template-columns:1fr 1fr; }
+      .issue:nth-child(odd) { border-left:0; padding-left:0; }
+      .cost-head { display:block; }
+      .cost-head p { margin-top:16px; }
+      .cost-grid { grid-template-columns:1fr; }
+      .steps { grid-template-columns:1fr; }
+      .step { min-height:220px; }
+      .why-grid { grid-template-columns:1fr 1fr; }
+      .why-item:nth-child(odd) { border-left:0; padding-left:0; }
+      .principles,.faq-wrap,.apply-card { grid-template-columns:1fr; gap:42px; }
+      .reviews-track { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:620px) {
+      .shell { width:min(100% - 28px,1180px); }
+      .topbar { height:66px; }
+      .topbar .shell { gap:10px; }
+      .phone-link { font-size:12px; }
+      .instagram-link { width:34px; height:34px; }
+      .nav { gap:0; }
+      .nav a:not(.nav-cta) { display:none; }
+      .nav-cta { color:#f4fbf6 !important; padding:9px 12px; font-size:12px !important; }
+      .hero { padding:102px 0 58px; }
+      h1 { font-size:44px; }
+      .hero-copy { font-size:16px; line-height:1.62; }
+      .hero-actions { display:grid; }
+      .button { width:100%; }
+      .signal { padding:23px; border-radius:22px; }
+      .score-ring { width:170px; height:170px; }
+      .score-copy strong { font-size:28px; }
+      .trust-grid { grid-template-columns:1fr; }
+      .trust-intro { grid-column:auto; }
+      .trust-item { border-left:0; border-top:1px solid var(--line); padding:13px 0 0; }
+      .credit-check { padding-top:20px; }
+      .credit-check-card { grid-template-columns:1fr; gap:20px; padding:23px; }
+      .credit-check-action { justify-items:stretch; }
+      .credit-check-note { text-align:left; }
+      .cost-example { padding:60px 0 72px; }
+      .cost-panel { padding:25px 18px; border-radius:22px; }
+      .cost-head { margin-bottom:25px; }
+      .cost-card { padding:20px 17px; }
+      .cost-card-head { align-items:flex-start; }
+      .cost-scenarios { grid-template-columns:1fr; }
+      .cost-scenario small { min-height:0; }
+      .cost-foot { align-items:stretch; flex-direction:column; }
+      .cost-foot .button { width:100%; }
+      section { padding:72px 0; }
+      .section-head { display:block; margin-bottom:34px; }
+      .section-head p { margin-top:16px; }
+      .issues { grid-template-columns:1fr; }
+      .issue,.issue + .issue,.issue:nth-child(odd) { min-height:auto; border-left:0; padding:23px 0; }
+      .whatsapp-float { width:54px; height:54px; right:max(14px,env(safe-area-inset-right)); bottom:max(16px,env(safe-area-inset-bottom)); }
+      .issue h3 { margin:19px 0 7px; }
+      .step { min-height:235px; padding:24px; }
+      .why-grid { grid-template-columns:1fr; }
+      .why-item,.why-item + .why-item,.why-item:nth-child(odd) { min-height:auto; border-left:0; padding:23px 0; }
+      .why-item h3 { margin:28px 0 7px; }
+      .principles { gap:35px; }
+      .reviews-track { grid-template-columns:1fr; }
+      .review-card { min-height:255px; padding:23px; }
+      .review-card h3 { margin-top:30px; }
+      .reviews-controls { margin-top:18px; }
+      .faq-wrap { gap:30px; }
+      .apply { padding-top:10px; }
+      .apply-card { margin-inline:-2px; padding:31px 22px; border-radius:22px; }
+      .form-row { grid-template-columns:1fr; }
+      .disclaimer { padding-bottom:100px; }
+      .mobile-cta { display:none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior:auto; }
+      * { transition:none !important; }
+      .momentum-path,.momentum-point,.momentum-arrow { animation:none !important; opacity:.55; stroke-dashoffset:0; transform:none; }
+    }
+  </style>
+<template id="__bundler_thumbnail" data-bg-color="#0a0d0b"><svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><g transform="translate(600 400)" fill="#20d36b"><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(0)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(30)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(60)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(90)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(120)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(150)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(180)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(210)" opacity="1"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(240)" opacity="0.25"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(270)" opacity="0.25"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(300)" opacity="0.25"/><rect x="-30" y="-260" width="60" height="130" rx="12" transform="rotate(330)" opacity="0.25"/></g></svg></template>
+</head>
+<body>
+  <header class="topbar" aria-label="Навигация">
+    <div class="shell">
+      <a class="phone-link" href="tel:+15619285780" aria-label="Позвонить в Boost Line по номеру +1 561-928-5780">+1 561-928-5780</a>
+      <a class="instagram-link" href="https://www.instagram.com/boostlinee?stkn=MTYzbWE4ZXhzd2l6Ng==" target="_blank" rel="noopener" aria-label="Boost Line в Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>
+      </a>
+      <nav class="nav">
+        <a href="#problems">С чем помогаем</a>
+        <a href="#process">Как работаем</a>
+        <a href="#faq">Вопросы</a>
+        <a class="nav-cta" href="#apply">Получить консультацию</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-momentum" aria-hidden="true">
+        <svg viewBox="0 0 1200 620" preserveAspectRatio="none">
+          <g class="momentum-grid">
+            <line x1="0" y1="505" x2="1200" y2="505"></line>
+            <line x1="0" y1="355" x2="1200" y2="355"></line>
+            <line x1="0" y1="205" x2="1200" y2="205"></line>
+          </g>
+          <path class="momentum-path" d="M0 545 C130 545 155 484 258 470 S392 446 452 386 S577 405 647 318 S783 315 844 226 S986 232 1088 108"></path>
+          <circle class="momentum-point" cx="258" cy="470" r="8"></circle>
+          <circle class="momentum-point" cx="452" cy="386" r="8"></circle>
+          <circle class="momentum-point" cx="647" cy="318" r="8"></circle>
+          <circle class="momentum-point" cx="844" cy="226" r="8"></circle>
+          <path class="momentum-arrow" d="M1048 112 1091 105 1084 149"></path>
+        </svg>
+      </div>
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow">Boost Line · кредитный консалтинг</p>
+          <h1>Постоянные отказы из-за низкого рейтинга? <span class="hero-solution">Мы исправим!</span></h1>
+          <p class="hero-copy">Разберём кредитные отчёты, найдём спорные и неточные записи и составим понятную стратегию восстановления — без сложных терминов и хаотичных действий.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#apply">Получить разбор ситуации</a>
+            <a class="button button-ghost" href="#process">Как проходит работа</a>
+          </div>
+        </div>
+        <aside class="signal" aria-label="Пример персонального разбора">
+          <div class="signal-label"><span>Персональный разбор</span><span class="signal-dot"></span></div>
+          <div class="score-ring" id="scoreRing" aria-hidden="true"><svg viewBox="0 0 200 200" id="ringSvg"></svg><div class="score-copy"><strong id="stageNum">3 шага</strong><span id="stageLbl">к результату</span></div></div>
+          
+          <div class="signal-rows">
+            <div class="signal-row off"><span class="signal-check">✓</span><span>Проверка трех бюро</span><em>REVIEW</em></div>
+            <div class="signal-row off"><span class="signal-check">✓</span><span>Цели и составление плана</span><em>PLAN</em></div>
+            <div class="signal-row off"><span class="signal-check">✓</span><span>Сопровождение до результата</span><em>ACTION</em></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="problems">
+      <div class="shell">
+        <div class="section-head">
+          <h2>Что может тянуть кредитную историю вниз</h2>
+          <p>Сначала мы проверяем, как информация отражена в отчётах, чем она подтверждается и какие шаги имеют основания.</p>
+        </div>
+        <div class="issues">
+          <article class="issue"><span class="issue-num">01</span><h3>Collections</h3><p>Проверяем данные о долге, владельце счета, сумме и датах.</p></article>
+          <article class="issue"><span class="issue-num">02</span><h3>Late payments</h3><p>Сверяем историю платежей и ищем ошибки в отчетности.</p></article>
+          <article class="issue"><span class="issue-num">03</span><h3>Charge-off</h3><p>Разбираем статус счета и соответствие информации документам.</p></article>
+          <article class="issue"><span class="issue-num">04</span><h3>Hard inquiries</h3><p>Проверяем, были ли запросы авторизованы и корректно отражены.</p></article>
+          <article class="issue"><span class="issue-num">05</span><h3>Несоответствия персональной информации</h3><p>Ищем расхождения в имени, адресах и других персональных данных.</p></article>
+        </div>
+      </div>
+    </section>
+
+
+    <aside class="credit-check" aria-labelledby="credit-check-title">
+      <div class="shell">
+        <div class="credit-check-card">
+          <div class="credit-check-copy">
+            <div class="partner-badge" aria-label="Официальный партнёр Smart Credit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v5c0 5.2-3.4 8.4-8 10-4.6-1.6-8-4.8-8-10V6l8-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>
+              Официальный партнёр Smart Credit
+            </div>
+            <h2 id="credit-check-title">Проверьте кредитную историю за $1</h2>
+            <p>Получите доступ к своим кредитным отчётам перед консультацией — так разбор будет предметным с первого разговора.</p>
+          </div>
+          <div class="credit-check-action">
+            <a class="button button-primary" href="https://www.smartcredit.com/join/?pid=42039" target="_blank" rel="noopener sponsored">Проверить кредитную историю за $1 →</a>
+            <span class="credit-check-note">Партнёрская ссылка Boost Line · условия сервиса — на сайте SmartCredit</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="cost-example" id="cost-example" aria-labelledby="cost-title">
+      <div class="shell">
+        <div class="cost-panel">
+          <div class="cost-head">
+            <h2 id="cost-title">Сколько стоит вам низкий кредитный скор</h2>
+            <p>Один и тот же заём может обойтись заметно дороже. Ниже — два простых расчётных примера для скора 600 и восстановленного скора 700.</p>
+          </div>
+          <div class="cost-grid">
+            <article class="cost-card">
+              <div class="cost-card-head"><h3>Ипотека</h3><span>$300,000<br>на 30 лет</span></div>
+              <div class="cost-scenarios">
+                <div class="cost-scenario"><small>Низкий скор · 600</small><strong>≈ $530,427</strong><span>переплата при условной ставке 8.5%</span></div>
+                <div class="cost-scenario better"><small>Восстановленный · 700</small><strong>≈ $382,633</strong><span>переплата при условной ставке 6.5%</span></div>
+              </div>
+              <p class="cost-loss"><span>Потеря на процентах</span><strong>≈ $147,793</strong></p>
+            </article>
+            <article class="cost-card">
+              <div class="cost-card-head"><h3>Автокредит</h3><span>$30,000<br>на 72 месяца</span></div>
+              <div class="cost-scenarios">
+                <div class="cost-scenario"><small>Низкий скор · 600</small><strong>≈ $18,052</strong><span>переплата при условной ставке 17%</span></div>
+                <div class="cost-scenario better"><small>Восстановленный · 700</small><strong>≈ $6,826</strong><span>переплата при условной ставке 7%</span></div>
+              </div>
+              <p class="cost-loss"><span>Потеря на процентах</span><strong>≈ $11,226</strong></p>
+            </article>
+          </div>
+          <div class="cost-foot">
+            <p class="cost-note">Это иллюстративный расчёт с условными ставками, без первоначального взноса, комиссий, налогов и страховки. Реальные условия зависят не только от кредитного скора, но и от дохода, долга, кредитора, рынка и других факторов. Пример не является предложением кредита или гарантией ставки.</p>
+            <a class="button button-primary" href="#apply">Получить бесплатную консультацию</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process" id="process">
+      <div class="shell">
+        <div class="section-head">
+          <h2>По полочкам: от отчёта до действий и результата</h2>
+          <p>Без перегруза. На каждом этапе вы понимаете, что мы проверяем, что можно сделать и чего ожидать дальше.</p>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <div class="step-top"><span class="step-num">ШАГ 01</span><span class="step-icon" aria-hidden="true">↗</span></div>
+            <h3>Диагностика</h3>
+            <p>Знакомимся с вашей целью и изучаем кредитные отчеты из основных бюро.</p>
+          </article>
+          <article class="step">
+            <div class="step-top"><span class="step-num">ШАГ 02</span><span class="step-icon" aria-hidden="true">≡</span></div>
+            <h3>Персональный план</h3>
+            <p>Определяем приоритеты: какие записи проверить, какие документы собрать и что улучшать в первую очередь.</p>
+          </article>
+          <article class="step">
+            <div class="step-top"><span class="step-num">ШАГ 03</span><span class="step-icon" aria-hidden="true">✓</span></div>
+            <h3>Сопровождение</h3>
+            <p>Помогаем пройти процесс последовательно, отслеживать ответы и корректировать дальнейшие шаги до результата.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="why" id="why">
+      <div class="shell">
+        <div class="section-head">
+          <h2>Почему выбирают нас</h2>
+          <p>Опыт, персональная стратегия и ответственность за работу, зафиксированная в договоре.</p>
+        </div>
+        <div class="why-grid">
+          <article class="why-item"><span class="why-value">700+</span><h3>Успешных кейсов</h3><p>Практический опыт с разными ситуациями в кредитных отчётах.</p></article>
+          <article class="why-item"><span class="why-value">100+</span><h3>Пунктов в среднем</h3><p>В среднем на столько вырастает кредитный рейтинг клиентов по данным Boost Line.</p></article>
+          <article class="why-item"><span class="why-value">1:1</span><h3>Персональный план</h3><p>Индивидуальная стратегия для каждого клиента, его отчётов и целей.</p></article>
+          <article class="why-item"><span class="why-value">100%</span><h3>Конфиденциальность и ответственность</h3><p>Бережно относимся к вашим данным и отвечаем за свою работу по договору.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell principles">
+        <div>
+          <h2>Либо мы делаем свою работу по договору, либо возвращаем деньги.</h2>
+          <p>До старта фиксируем объём и этапы работы. Если Boost Line не выполнит свою часть договора, мы вернём деньги.</p>
+        </div>
+        <div class="principle-list">
+          <div class="principle"><b>1</b><div><strong>Фиксируем объём работы</strong><span>Вы заранее знаете, какие этапы входят в договор.</span></div></div>
+          <div class="principle"><b>2</b><div><strong>Объясняем каждый шаг</strong><span>Вы понимаете, что мы делаем, на каком этапе и зачем.</span></div></div>
+          <div class="principle"><b>3</b><div><strong>Отвечаем за свою часть</strong><span>Гарантия охватывает выполнение всех этапов работы, закреплённых в договоре.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews" id="reviews" aria-labelledby="reviews-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="reviews-title">Отзывы клиентов</h2>
+          <p>Каждая карточка готова для реального отзыва — имя и текст появятся только после согласия клиента.</p>
+        </div>
+        <div class="reviews-frame" id="reviewsFrame" role="region" aria-roledescription="карусель" aria-label="Шаблоны отзывов клиентов">
+          <div class="reviews-track" id="reviewsTrack">
+            <article class="review-card" aria-label="Шаблон отзыва 1 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">01 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 2 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">02 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 3 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">03 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 4 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">04 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 5 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">05 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 6 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">06 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 7 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">07 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 8 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">08 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 9 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">09 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+            <article class="review-card" aria-label="Шаблон отзыва 10 из 10"><div class="review-card-top"><span class="review-template">Шаблон отзыва</span><span class="review-number">10 / 10</span></div><h3>Место для имени клиента</h3><p>Сюда вставляется настоящий отзыв клиента о его опыте работы с Boost Line.</p><div class="review-permission">Публикация после согласия клиента</div></article>
+          </div>
+        </div>
+        <div class="reviews-controls">
+          <span class="reviews-progress" id="reviewsProgress" aria-live="polite">01–03 / 10</span>
+          <div class="reviews-buttons">
+            <button class="carousel-btn" id="reviewsPrev" type="button" aria-label="Предыдущий отзыв">←</button>
+            <button class="carousel-btn" id="reviewsNext" type="button" aria-label="Следующий отзыв">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="apply" id="apply">
+      <div class="shell">
+        <div class="apply-card">
+          <div class="apply-copy">
+            <h2>Начнём с вашей ситуации</h2>
+            <p>Укажите имя, телефон и выберите проблему.</p>
+          </div>
+          <form class="form" id="leadForm" novalidate>
+            <div class="field"><label for="firstName">Имя</label><input id="firstName" name="firstName" autocomplete="given-name" placeholder="Имя" required></div>
+            <div class="field"><label for="phone">Телефон</label><div class="phone-field"><span class="phone-prefix" aria-hidden="true">+1</span><input id="phone" name="phone" type="tel" autocomplete="tel-national" inputmode="numeric" maxlength="14" placeholder="(000) 000-0000" aria-describedby="phoneHelp" required></div><span id="phoneHelp" hidden>Введите корректный десятизначный номер телефона США</span></div>
+            <fieldset class="fieldset">
+              <legend>Какая у вас проблема?</legend>
+              <div class="chips" id="chips">
+                <button class="chip" type="button">Collection</button>
+                <button class="chip" type="button">Late payment</button>
+                <button class="chip" type="button">Charge-off</button>
+                <button class="chip" type="button">Hard inquiries</button>
+                <button class="chip" type="button">Другое</button>
+              </div>
+            </fieldset>
+            <label class="consent" for="consent">
+              <input id="consent" name="consent" type="checkbox" required>
+              <span><strong>Согласие на обработку персональных данных</strong><br>Я согласен на обработку имени, телефона и выбранной проблемы, а также на звонки и SMS по моей заявке. Я принимаю <a href="data:text/html;base64,PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9InJ1Ij4KPGhlYWQ+CiAgPG1ldGEgY2hhcnNldD0idXRmLTgiPgogIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MSwgdmlld3BvcnQtZml0PWNvdmVyIj4KICA8bWV0YSBuYW1lPSJjb2xvci1zY2hlbWUiIGNvbnRlbnQ9ImxpZ2h0IGRhcmsiPgogIDxtZXRhIG5hbWU9InRoZW1lLWNvbG9yIiBjb250ZW50PSIjZjVmN2Y1Ij4KICA8dGl0bGU+0J/QvtC70LjRgtC40LrQsCDQutC+0L3RhNC40LTQtdC90YbQuNCw0LvRjNC90L7RgdGC0Lgg4oCUIEJvb3N0IExpbmU8L3RpdGxlPgogIDxsaW5rIHJlbD0icHJlY29ubmVjdCIgaHJlZj0iaHR0cHM6Ly9mb250cy5nb29nbGVhcGlzLmNvbSI+CiAgPGxpbmsgcmVsPSJwcmVjb25uZWN0IiBocmVmPSJodHRwczovL2ZvbnRzLmdzdGF0aWMuY29tIiBjcm9zc29yaWdpbj4KICA8bGluayBocmVmPSJodHRwczovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2NzczI/ZmFtaWx5PU1hbnJvcGU6d2dodEA0MDA7NTAwOzYwMDs3MDA7ODAwJmZhbWlseT1JQk0rUGxleCtNb25vOndnaHRANTAwJmRpc3BsYXk9c3dhcCIgcmVsPSJzdHlsZXNoZWV0Ij4KICA8c3R5bGU+CiAgICA6cm9vdCB7CiAgICAgIGNvbG9yLXNjaGVtZTpsaWdodCBkYXJrOwogICAgICAtLWJnOiNmNWY3ZjU7IC0tc3VyZmFjZTojZmZmOyAtLWluazojMGIwZTBjOyAtLW11dGVkOiM0ZjVkNTQ7CiAgICAgIC0tbGluZTojZDdkZWQ5OyAtLWdyZWVuOiMyMGQzNmI7IC0tZ3JlZW4tZGFyazojMDg3YTNiOyAtLWJsYWNrOiMwYTBkMGI7CiAgICAgIC0taGVyby1pbms6I2Y3ZmZmOTsgLS1mb2N1czojMGE4ZDQ1OwogICAgfQogICAgQG1lZGlhIChwcmVmZXJzLWNvbG9yLXNjaGVtZTpkYXJrKSB7CiAgICAgIDpyb290IHsKICAgICAgICAtLWJnOiMwODBiMDk7IC0tc3VyZmFjZTojMTExNjEyOyAtLWluazojZjNmOGY0OyAtLW11dGVkOiNhZWJiYjE7CiAgICAgICAgLS1saW5lOiMyYjM1MmU7IC0tZ3JlZW46IzMxZTQ3OTsgLS1ncmVlbi1kYXJrOiM4M2YwYWE7IC0tYmxhY2s6IzA1MDcwNjsKICAgICAgICAtLWhlcm8taW5rOiNmN2ZmZjk7IC0tZm9jdXM6IzY0ZjA5NTsKICAgICAgfQogICAgfQogICAgKiB7IGJveC1zaXppbmc6Ym9yZGVyLWJveDsgfQogICAgaHRtbCB7IGNvbG9yLXNjaGVtZTpsaWdodCBkYXJrOyBzY3JvbGwtYmVoYXZpb3I6c21vb3RoOyB9CiAgICBib2R5IHsgbWFyZ2luOjA7IGJhY2tncm91bmQ6dmFyKC0tYmcpOyBjb2xvcjp2YXIoLS1pbmspOyBmb250LWZhbWlseToiTWFucm9wZSIsc2Fucy1zZXJpZjsgbGluZS1oZWlnaHQ6MS41OyAtd2Via2l0LWZvbnQtc21vb3RoaW5nOmFudGlhbGlhc2VkOyB9CiAgICBhIHsgY29sb3I6aW5oZXJpdDsgLXdlYmtpdC10YXAtaGlnaGxpZ2h0LWNvbG9yOnRyYW5zcGFyZW50OyB9CiAgICA6Zm9jdXMtdmlzaWJsZSB7IG91dGxpbmU6M3B4IHNvbGlkIHZhcigtLWZvY3VzKTsgb3V0bGluZS1vZmZzZXQ6M3B4OyB9CiAgICAucGFnZSB7IG1pbi1oZWlnaHQ6MTAwdmg7IHBhZGRpbmc6NTRweCAwIDgwcHg7IH0KICAgIC5zaGVsbCB7IHdpZHRoOm1pbig5MDBweCxjYWxjKDEwMCUgLSA0MHB4KSk7IG1hcmdpbi1pbmxpbmU6YXV0bzsgfQogICAgLmJhY2sgeyBkaXNwbGF5OmlubGluZS1mbGV4OyBhbGlnbi1pdGVtczpjZW50ZXI7IGNvbG9yOnZhcigtLWdyZWVuLWRhcmspOyB0ZXh0LWRlY29yYXRpb246bm9uZTsgZm9udC1zaXplOjE0cHg7IGZvbnQtd2VpZ2h0OjgwMDsgbWFyZ2luLWJvdHRvbTo1MnB4OyB9CiAgICAuYmFjazpob3ZlciB7IHRleHQtZGVjb3JhdGlvbjp1bmRlcmxpbmU7IHRleHQtdW5kZXJsaW5lLW9mZnNldDozcHg7IH0KICAgIC5oZWFkIHsgcGFkZGluZy1ib3R0b206MzZweDsgYm9yZGVyLWJvdHRvbToxcHggc29saWQgdmFyKC0tbGluZSk7IH0KICAgIC5raWNrZXIgeyBtYXJnaW46MCAwIDE1cHg7IGNvbG9yOnZhcigtLWdyZWVuLWRhcmspOyBmb250OjUwMCAxMnB4LzEuNCAiSUJNIFBsZXggTW9ubyIsbW9ub3NwYWNlOyB0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOi4wOGVtOyB9CiAgICBoMSB7IG1hcmdpbjowOyBtYXgtd2lkdGg6ODIwcHg7IGZvbnQtc2l6ZTpjbGFtcCgzOHB4LDZ2dyw2NHB4KTsgbGluZS1oZWlnaHQ6MS4wMjsgbGV0dGVyLXNwYWNpbmc6LS4wNWVtOyB9CiAgICAudXBkYXRlZCB7IGRpc3BsYXk6YmxvY2s7IGNvbG9yOnZhcigtLW11dGVkKTsgZm9udC1zaXplOjEzcHg7IG1hcmdpbi10b3A6MjJweDsgfQogICAgLmludHJvIHsgbWFyZ2luOjMwcHggMCAwOyBwYWRkaW5nOjI0cHg7IGJvcmRlcjoxcHggc29saWQgdmFyKC0tbGluZSk7IGJhY2tncm91bmQ6dmFyKC0tc3VyZmFjZSk7IGJvcmRlci1yYWRpdXM6MThweDsgfQogICAgLmludHJvIHAgeyBjb2xvcjp2YXIoLS1pbmspOyB9CiAgICAuY29udGVudCB7IG1hcmdpbi10b3A6MTRweDsgfQogICAgc2VjdGlvbiB7IHBhZGRpbmc6MzBweCAwOyBib3JkZXItYm90dG9tOjFweCBzb2xpZCB2YXIoLS1saW5lKTsgfQogICAgaDIgeyBtYXJnaW46MCAwIDEycHg7IGZvbnQtc2l6ZToyMXB4OyBsZXR0ZXItc3BhY2luZzotLjAyNWVtOyB9CiAgICBoMyB7IG1hcmdpbjoyMnB4IDAgOHB4OyBmb250LXNpemU6MTZweDsgfQogICAgcCxsaSB7IGNvbG9yOnZhcigtLW11dGVkKTsgZm9udC1zaXplOjE1cHg7IGxpbmUtaGVpZ2h0OjEuODsgfQogICAgcCB7IG1hcmdpbjowOyB9CiAgICBwICsgcCB7IG1hcmdpbi10b3A6MTJweDsgfQogICAgdWwgeyBtYXJnaW46MTBweCAwIDA7IHBhZGRpbmctbGVmdDoyMnB4OyB9CiAgICBsaSArIGxpIHsgbWFyZ2luLXRvcDo3cHg7IH0KICAgIC5jb250ZW50IGEsLmludHJvIGEgeyBjb2xvcjp2YXIoLS1ncmVlbi1kYXJrKTsgZm9udC13ZWlnaHQ6NzAwOyB9CiAgICAuY29udGFjdCB7IHBhZGRpbmc6MjRweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlKTsgYm9yZGVyOjFweCBzb2xpZCB2YXIoLS1saW5lKTsgYm9yZGVyLXJhZGl1czoxOHB4OyB9CiAgICAuY29udGFjdCBwICsgcCB7IG1hcmdpbi10b3A6NXB4OyB9CiAgICAucmV0dXJuIHsgZGlzcGxheTppbmxpbmUtZmxleDsgYWxpZ24taXRlbXM6Y2VudGVyOyBqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyOyBtaW4taGVpZ2h0OjUycHg7IG1hcmdpbi10b3A6MzZweDsgcGFkZGluZzowIDIzcHg7IGJvcmRlci1yYWRpdXM6OTk5cHg7IGJhY2tncm91bmQ6dmFyKC0tYmxhY2spOyBjb2xvcjp2YXIoLS1oZXJvLWluayk7IHRleHQtZGVjb3JhdGlvbjpub25lOyBmb250LXNpemU6MTRweDsgZm9udC13ZWlnaHQ6ODAwOyB9CiAgICAucmV0dXJuOmhvdmVyIHsgYmFja2dyb3VuZDojMTgzMjIyOyB9CiAgICBAbWVkaWEgKG1heC13aWR0aDo2MjBweCkgewogICAgICAucGFnZSB7IHBhZGRpbmc6MzBweCAwIDU4cHg7IH0KICAgICAgLnNoZWxsIHsgd2lkdGg6bWluKDEwMCUgLSAyOHB4LDkwMHB4KTsgfQogICAgICAuYmFjayB7IG1hcmdpbi1ib3R0b206MzhweDsgfQogICAgICAuaGVhZCB7IHBhZGRpbmctYm90dG9tOjI4cHg7IH0KICAgICAgaDEgeyBmb250LXNpemU6NDBweDsgfQogICAgICAuaW50cm8geyBwYWRkaW5nOjIwcHg7IH0KICAgICAgc2VjdGlvbiB7IHBhZGRpbmc6MjVweCAwOyB9CiAgICAgIHAsbGkgeyBmb250LXNpemU6MTRweDsgbGluZS1oZWlnaHQ6MS43MjsgfQogICAgfQogICAgQG1lZGlhIChwcmVmZXJzLXJlZHVjZWQtbW90aW9uOnJlZHVjZSkgeyBodG1sIHsgc2Nyb2xsLWJlaGF2aW9yOmF1dG87IH0gfQogIDwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CiAgPG1haW4gY2xhc3M9InBhZ2UiPgogICAgPGRpdiBjbGFzcz0ic2hlbGwiPgogICAgICA8YSBjbGFzcz0iYmFjayIgaHJlZj0iLi4vI2FwcGx5Ij7ihpAg0JLQtdGA0L3Rg9GC0YzRgdGPINC6INC30LDRj9Cy0LrQtTwvYT4KICAgICAgPGhlYWRlciBjbGFzcz0iaGVhZCI+CiAgICAgICAgPHAgY2xhc3M9ImtpY2tlciI+0J/QvtC70LjRgtC40LrQsCDQutC+0L3RhNC40LTQtdC90YbQuNCw0LvRjNC90L7RgdGC0Lg8L3A+CiAgICAgICAgPGgxPtCa0LDQuiBCb29zdCBMaW5lINGB0L7QsdC40YDQsNC10YIsINC40YHQv9C+0LvRjNC30YPQtdGCINC4INC30LDRidC40YnQsNC10YIg0L/QtdGA0YHQvtC90LDQu9GM0L3Ri9C1INC00LDQvdC90YvQtTwvaDE+CiAgICAgICAgPHNwYW4gY2xhc3M9InVwZGF0ZWQiPtCU0LDRgtCwINCy0YHRgtGD0L/Qu9C10L3QuNGPINCyINGB0LjQu9GDINC4INC/0L7RgdC70LXQtNC90LXQs9C+INC+0LHQvdC+0LLQu9C10L3QuNGPOiAyOSDRgdC10L3RgtGP0LHRgNGPIDIwMjYg0LPQvtC00LA8L3NwYW4+CiAgICAgIDwvaGVhZGVyPgoKICAgICAgPGRpdiBjbGFzcz0iaW50cm8iPgogICAgICAgIDxwPtCd0LDRgdGC0L7Rj9GJ0LDRjyDQn9C+0LvQuNGC0LjQutCwINC60L7QvdGE0LjQtNC10L3RhtC40LDQu9GM0L3QvtGB0YLQuCDQvtCx0YrRj9GB0L3Rj9C10YIsINC60LDQutC40LUg0LTQsNC90L3Ri9C1INC/0L7Qu9GD0YfQsNC10YIgQm9vc3QgTGluZSwg0LTQu9GPINC60LDQutC40YUg0YbQtdC70LXQuSDQvtC90Lgg0LjRgdC/0L7Qu9GM0LfRg9GO0YLRgdGPLCDQutC+0LzRgyDQvNC+0LPRg9GCINCx0YvRgtGMINC/0LXRgNC10LTQsNC90Ysg0Lgg0LrQsNC6INCy0Ysg0LzQvtC20LXRgtC1INGA0LXQsNC70LjQt9C+0LLQsNGC0Ywg0YHQstC+0Lgg0L/RgNCw0LLQsC4g0J/QvtC70LjRgtC40LrQsCDQv9GA0LjQvNC10L3Rj9C10YLRgdGPINC6INC00LDQvdC90YvQvCwg0L/QtdGA0LXQtNCw0L3QvdGL0Lwg0YfQtdGA0LXQtyDRjdGC0L7RgiDRgdCw0LnRgiwg0L/QviDRgtC10LvQtdGE0L7QvdGDLCDQsiBXaGF0c0FwcCwgSW5zdGFncmFtINC4INCy0L4g0LLRgNC10LzRjyDQutC+0L3RgdGD0LvRjNGC0LDRhtC40LguPC9wPgogICAgICA8L2Rpdj4KCiAgICAgIDxkaXYgY2xhc3M9ImNvbnRlbnQiPgogICAgICAgIDxzZWN0aW9uPgogICAgICAgICAgPGgyPjEuINCa0YLQviDQvtGC0LLQtdGH0LDQtdGCINC30LAg0L7QsdGA0LDQsdC+0YLQutGDINC00LDQvdC90YvRhTwvaDI+CiAgICAgICAgICA8cD7QntC/0LXRgNCw0YLQvtGA0L7QvCDQv9C10YDRgdC+0L3QsNC70YzQvdGL0YUg0LTQsNC90L3Ri9GFINGP0LLQu9GP0LXRgtGB0Y8gQm9vc3QgTGluZS48L3A+CiAgICAgICAgICA8cD7Qn9C+INCy0L7Qv9GA0L7RgdCw0Lwg0LrQvtC90YTQuNC00LXQvdGG0LjQsNC70YzQvdC+0YHRgtC4INC80L7QttC90L4g0YHQstGP0LfQsNGC0YzRgdGPINC/0L4g0YLQtdC70LXRhNC+0L3RgyA8YSBocmVmPSJ0ZWw6KzE1NjE5Mjg1NzgwIj4rMSA1NjEtOTI4LTU3ODA8L2E+INC40LvQuCDRh9C10YDQtdC3IDxhIGhyZWY9Imh0dHBzOi8vd2EubWUvMTU2MTkyODU3ODAiIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIj5XaGF0c0FwcDwvYT4uPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+Mi4g0JrQsNC60LjQtSDQtNCw0L3QvdGL0LUg0LzRiyDRgdC+0LHQuNGA0LDQtdC8PC9oMj4KICAgICAgICAgIDxwPtCf0YDQuCDQvtCx0YDQsNGJ0LXQvdC40Lgg0LfQsCDQsdC10YHQv9C70LDRgtC90L7QuSDQutC+0L3RgdGD0LvRjNGC0LDRhtC40LXQuSDQvNGLINC80L7QttC10Lwg0L/QvtC70YPRh9C40YLRjDo8L3A+CiAgICAgICAgICA8dWw+CiAgICAgICAgICAgIDxsaT7QuNC80Y87PC9saT4KICAgICAgICAgICAgPGxpPtC90L7QvNC10YAg0YLQtdC70LXRhNC+0L3QsDs8L2xpPgogICAgICAgICAgICA8bGk+0LLRi9Cx0YDQsNC90L3Rg9GOINC60LDRgtC10LPQvtGA0LjRjiDQv9GA0L7QsdC70LXQvNGLOiBjb2xsZWN0aW9uLCBsYXRlIHBheW1lbnQsIGNoYXJnZS1vZmYsIGhhcmQgaW5xdWlyaWVzINC40LvQuCDCq9C00YDRg9Cz0L7QtcK7OzwvbGk+CiAgICAgICAgICAgIDxsaT7RgdC+0LTQtdGA0LbQsNC90LjQtSDRgdC+0L7QsdGJ0LXQvdC40Lkg0Lgg0YHQstC10LTQtdC90LjRjywg0LrQvtGC0L7RgNGL0LUg0LLRiyDQtNC+0LHRgNC+0LLQvtC70YzQvdC+INGB0L7QvtCx0YnQsNC10YLQtSDQstC+INCy0YDQtdC80Y8g0LTQsNC70YzQvdC10LnRiNC10LPQviDQvtCx0YnQtdC90LjRjzs8L2xpPgogICAgICAgICAgICA8bGk+0L7RgtC80LXRgtC60YMg0L4g0YHQvtCz0LvQsNGB0LjQuCDRgSDQvtCx0YDQsNCx0L7RgtC60L7QuSDQtNCw0L3QvdGL0YUg0Lgg0LTQsNGC0YMg0LLQt9Cw0LjQvNC+0LTQtdC50YHRgtCy0LjRjy48L2xpPgogICAgICAgICAgPC91bD4KICAgICAgICAgIDxwPtCf0LvQsNGC0YTQvtGA0LzQsCDRgNCw0LfQvNC10YnQtdC90LjRjyDRgdCw0LnRgtCwINC4INGB0LXRgNCy0LjRgdGLINGB0LLRj9C30Lgg0LzQvtCz0YPRgiDQsNCy0YLQvtC80LDRgtC40YfQtdGB0LrQuCDQvtCx0YDQsNCx0LDRgtGL0LLQsNGC0Ywg0YLQtdGF0L3QuNGH0LXRgdC60LjQtSDRgdCy0LXQtNC10L3QuNGPLCDQvdCw0L/RgNC40LzQtdGAIElQLdCw0LTRgNC10YEsINGC0LjQvyDRg9GB0YLRgNC+0LnRgdGC0LLQsCDQuCDQsdGA0LDRg9C30LXRgNCwLCDQtNCw0YLRgyDQuCDQstGA0LXQvNGPINC30LDQv9GA0L7RgdCwLCDQsCDRgtCw0LrQttC1INC20YPRgNC90LDQu9GLINCx0LXQt9C+0L/QsNGB0L3QvtGB0YLQuC4gQm9vc3QgTGluZSDQvdC1INC/0YDQvtGB0LjRgiDRg9C60LDQt9GL0LLQsNGC0Ywg0LIg0YTQvtGA0LzQtSBTb2NpYWwgU2VjdXJpdHkgbnVtYmVyLCDQvdC+0LzQtdGA0LAg0LrRgNC10LTQuNGC0L3Ri9GFINGB0YfQtdGC0L7Qsiwg0LHQsNC90LrQvtCy0YHQutC40LUg0YDQtdC60LLQuNC30LjRgtGLLCDQv9Cw0YDQvtC70Lgg0LjQu9C4INC00LDQvdC90YvQtSDQv9C70LDRgtGR0LbQvdGL0YUg0LrQsNGA0YIuPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+My4g0J7RgtC60YPQtNCwINC80Ysg0L/QvtC70YPRh9Cw0LXQvCDQtNCw0L3QvdGL0LU8L2gyPgogICAgICAgICAgPHA+0J7RgdC90L7QstC90L7QuSDQuNGB0YLQvtGH0L3QuNC6IOKAlCDQstGLINGB0LDQvNC4OiDQutC+0LPQtNCwINC30LDQv9C+0LvQvdGP0LXRgtC1INGE0L7RgNC80YMsINC30LLQvtC90LjRgtC1LCDQv9C40YjQtdGC0LUg0LIgV2hhdHNBcHAg0LjQu9C4IEluc3RhZ3JhbSDQu9C40LHQviDQvtCx0YnQsNC10YLQtdGB0Ywg0YEg0LrQvtC90YHRg9C70YzRgtCw0L3RgtC+0LwuINCV0YHQu9C4INCy0Ysg0L/QtdGA0LXRhdC+0LTQuNGC0LUg0L3QsCBTbWFydENyZWRpdCwgV2hhdHNBcHAg0LjQu9C4IEluc3RhZ3JhbSwg0Y3RgtC4INGB0LXRgNCy0LjRgdGLINC/0L7Qu9GD0YfQsNGO0YIg0LTQsNC90L3Ri9C1INC90LXQv9C+0YHRgNC10LTRgdGC0LLQtdC90L3QviDQvtGCINCy0LDRgSDQuCDQvtCx0YDQsNCx0LDRgtGL0LLQsNGO0YIg0LjRhSDQv9C+INGB0L7QsdGB0YLQstC10L3QvdGL0Lwg0L/QvtC70LjRgtC40LrQsNC8LjwvcD4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIDxzZWN0aW9uPgogICAgICAgICAgPGgyPjQuINCU0LvRjyDRh9C10LPQviDQuNGB0L/QvtC70YzQt9GD0Y7RgtGB0Y8g0LTQsNC90L3Ri9C1PC9oMj4KICAgICAgICAgIDxwPtCc0Ysg0LjRgdC/0L7Qu9GM0LfRg9C10Lwg0LTQsNC90L3Ri9C1INGC0L7Qu9GM0LrQviDQsiDQvtCx0YrRkdC80LUsINC90LXQvtCx0YXQvtC00LjQvNC+0Lwg0LTQu9GPINGB0LvQtdC00YPRjtGJ0LjRhSDRhtC10LvQtdC5OjwvcD4KICAgICAgICAgIDx1bD4KICAgICAgICAgICAgPGxpPtGB0LLRj9C30LDRgtGM0YHRjyDRgSDQstCw0LzQuCDQv9C+INC30LDRj9Cy0LrQtSDQuCDQvdCw0LfQvdCw0YfQuNGC0Ywg0LrQvtC90YHRg9C70YzRgtCw0YbQuNGOOzwvbGk+CiAgICAgICAgICAgIDxsaT7Qv9C+0L3Rj9GC0Ywg0L7QsdGJ0YPRjiDQutCw0YLQtdCz0L7RgNC40Y4g0LrRgNC10LTQuNGC0L3QvtC5INC/0YDQvtCx0LvQtdC80Ysg0Lgg0L/QvtC00LPQvtGC0L7QstC40YLRjNGB0Y8g0Log0YDQsNC30LPQvtCy0L7RgNGDOzwvbGk+CiAgICAgICAgICAgIDxsaT7QvtGC0LLQtdGC0LjRgtGMINC90LAg0LLQvtC/0YDQvtGB0YssINC/0YDQtdC00L7RgdGC0LDQstC40YLRjCDQt9Cw0L/RgNC+0YjQtdC90L3Rg9GOINC40L3RhNC+0YDQvNCw0YbQuNGOINC4INGB0L7Qv9GA0L7QstC+0LbQtNCw0YLRjCDQvtCx0YDQsNGJ0LXQvdC40LU7PC9saT4KICAgICAgICAgICAgPGxpPtC/0L7QtNCz0L7RgtC+0LLQuNGC0YwsINC30LDQutC70Y7Rh9C40YLRjCDQuCDQuNGB0L/QvtC70L3QuNGC0Ywg0LTQvtCz0L7QstC+0YAg0L3QsCDRg9GB0LvRg9Cz0LgsINC10YHQu9C4INCy0Ysg0YDQtdGI0LjRgtC1INC/0YDQvtC00L7Qu9C20LjRgtGMINGA0LDQsdC+0YLRgzs8L2xpPgogICAgICAgICAgICA8bGk+0LLQtdGB0YLQuCDQtNC10LvQvtCy0YPRjiDQtNC+0LrRg9C80LXQvdGC0LDRhtC40Y4sINC+0LHQtdGB0L/QtdGH0LjQstCw0YLRjCDQsdC10LfQvtC/0LDRgdC90L7RgdGC0Ywg0Lgg0L/RgNC10LTQvtGC0LLRgNCw0YnQsNGC0Ywg0LfQu9C+0YPQv9C+0YLRgNC10LHQu9C10L3QuNGPOzwvbGk+CiAgICAgICAgICAgIDxsaT7QuNGB0L/QvtC70L3Rj9GC0Ywg0YLRgNC10LHQvtCy0LDQvdC40Y8g0LfQsNC60L7QvdCwINC4INC30LDRidC40YnQsNGC0Ywg0LfQsNC60L7QvdC90YvQtSDQv9GA0LDQstCwIEJvb3N0IExpbmUg0Lgg0L/QvtC70YzQt9C+0LLQsNGC0LXQu9C10LkuPC9saT4KICAgICAgICAgIDwvdWw+CiAgICAgICAgICA8cD7QnNGLINC90LUg0LjRgdC/0L7Qu9GM0LfRg9C10Lwg0YHQstC10LTQtdC90LjRjyDQuNC3INGE0L7RgNC80Ysg0LTQu9GPINC/0YDQuNC90Y/RgtC40Y8g0LDQstGC0L7QvNCw0YLQuNC30LjRgNC+0LLQsNC90L3Ri9GFINGA0LXRiNC10L3QuNC5LCDRgdC+0LfQtNCw0Y7RidC40YUg0LTQu9GPINCy0LDRgSDRjtGA0LjQtNC40YfQtdGB0LrQuNC1INC40LvQuCDQsNC90LDQu9C+0LPQuNGH0L3QviDQt9C90LDRh9C40LzRi9C1INC/0L7RgdC70LXQtNGB0YLQstC40Y8uPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+NS4g0KHQvtCz0LvQsNGB0LjQtSDQvdCwINC30LLQvtC90LrQuCDQuCBTTVM8L2gyPgogICAgICAgICAgPHA+0J7RgtC80LXRh9Cw0Y8g0YHQvtCz0LvQsNGB0LjQtSDQsiDRhNC+0YDQvNC1INC4INGD0LrQsNC30YvQstCw0Y8g0L3QvtC80LXRgCDRgtC10LvQtdGE0L7QvdCwLCDQstGLINGA0LDQt9GA0LXRiNCw0LXRgtC1IEJvb3N0IExpbmUg0YHQstGP0LfQsNGC0YzRgdGPINGBINCy0LDQvNC4INC/0L4g0LLQsNGI0LXQvNGDINC30LDQv9GA0L7RgdGDINGBINC/0L7QvNC+0YnRjNGOINGC0LXQu9C10YTQvtC90L3QvtCz0L4g0LfQstC+0L3QutCwINC4INGC0LXQutGB0YLQvtCy0L7Qs9C+INGB0L7QvtCx0YnQtdC90LjRjyAoU01TKS4g0KHQvtC+0LHRidC10L3QuNGPINC80L7Qs9GD0YIg0LrQsNGB0LDRgtGM0YHRjyDQutC+0L3RgdGD0LvRjNGC0LDRhtC40LgsINGD0YLQvtGH0L3QtdC90LjRjyDQt9Cw0L/RgNC+0YHQsCwg0LfQsNC/0LjRgdC4LCDQvdCw0L/QvtC80LjQvdCw0L3QuNGPINC4INC00LDQu9GM0L3QtdC50YjQuNGFINGI0LDQs9C+0LIg0L/QviDQstGL0LHRgNCw0L3QvdC+0Lkg0YPRgdC70YPQs9C1LjwvcD4KICAgICAgICAgIDxwPtCn0LDRgdGC0L7RgtCwINGB0L7QvtCx0YnQtdC90LjQuSDQt9Cw0LLQuNGB0LjRgiDQvtGCINGF0L7QtNCwINC+0LHRgNCw0YnQtdC90LjRjy4g0JzQvtCz0YPRgiDQv9GA0LjQvNC10L3Rj9GC0YzRgdGPINGB0YLQsNC90LTQsNGA0YLQvdGL0LUg0YLQsNGA0LjRhNGLINC+0L/QtdGA0LDRgtC+0YDQsCDQt9CwINGB0L7QvtCx0YnQtdC90LjRjyDQuCDQv9C10YDQtdC00LDRh9GDINC00LDQvdC90YvRhS4g0KHQvtCz0LvQsNGB0LjQtSDQvdCwINC30LLQvtC90LrQuCDQuNC70LggU01TINC90LUg0Y/QstC70Y/QtdGC0YHRjyDRg9GB0LvQvtCy0LjQtdC8INC/0L7QutGD0L/QutC4INGD0YHQu9GD0LPQuC4g0JLRiyDQvNC+0LbQtdGC0LUg0L7RgtC+0LfQstCw0YLRjCDRgdC+0LPQu9Cw0YHQuNC1INCyINC70Y7QsdC+0LUg0LLRgNC10LzRjzog0L7RgtCy0LXRgtGM0YLQtSA8c3Ryb25nPlNUT1A8L3N0cm9uZz4g0L3QsCBTTVMg0LjQu9C4INGB0L7QvtCx0YnQuNGC0LUg0L7QsSDRjdGC0L7QvCDQv9C+INGC0LXQu9C10YTQvtC90YMuINCU0LvRjyDQv9C+0LzQvtGJ0Lgg0LzQvtC20L3QviDQvtGC0LLQtdGC0LjRgtGMIDxzdHJvbmc+SEVMUDwvc3Ryb25nPiDQuNC70Lgg0L/QvtC30LLQvtC90LjRgtGMINC/0L4g0L3QvtC80LXRgNGDIDxhIGhyZWY9InRlbDorMTU2MTkyODU3ODAiPisxIDU2MS05MjgtNTc4MDwvYT4uINCe0YLQutCw0Lcg0L7RgiBTTVMg0L3QtSDQv9GA0LXQutGA0LDRidCw0LXRgiDQvtCx0YDQsNCx0L7RgtC60YMsINC60L7RgtC+0YDQsNGPINC90LXQvtCx0YXQvtC00LjQvNCwINC00LvRjyDQtNC10LnRgdGC0LLRg9GO0YnQtdCz0L4g0LTQvtCz0L7QstC+0YDQsCDQuNC70Lgg0LLRi9C/0L7Qu9C90LXQvdC40Y8g0YLRgNC10LHQvtCy0LDQvdC40Lkg0LfQsNC60L7QvdCwLjwvcD4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIDxzZWN0aW9uPgogICAgICAgICAgPGgyPjYuINCf0YDQsNCy0L7QstGL0LUg0L7RgdC90L7QstCw0L3QuNGPPC9oMj4KICAgICAgICAgIDxwPtCSINC30LDQstC40YHQuNC80L7RgdGC0Lgg0L7RgiDRgdC40YLRg9Cw0YbQuNC4INC80Ysg0L7QsdGA0LDQsdCw0YLRi9Cy0LDQtdC8INC00LDQvdC90YvQtSDQvdCwINC+0YHQvdC+0LLQsNC90LjQuCDQstCw0YjQtdCz0L4g0YHQvtCz0LvQsNGB0LjRjywg0LTQu9GPINC+0YLQstC10YLQsCDQvdCwINC30LDQv9GA0L7RgSDQtNC+INC30LDQutC70Y7Rh9C10L3QuNGPINC00L7Qs9C+0LLQvtGA0LAsINC00LvRjyDQt9Cw0LrQu9GO0YfQtdC90LjRjyDQuCDQuNGB0L/QvtC70L3QtdC90LjRjyDQtNC+0LPQvtCy0L7RgNCwLCDQtNC70Y8g0LLRi9C/0L7Qu9C90LXQvdC40Y8g0Y7RgNC40LTQuNGH0LXRgdC60LjRhSDQvtCx0Y/Qt9Cw0L3QvdC+0YHRgtC10LksINCwINGC0LDQutC20LUg0LIg0YDQsNC80LrQsNGFINC30LDQutC+0L3QvdGL0YUg0LjQvdGC0LXRgNC10YHQvtCyINC/0L4g0LfQsNGJ0LjRgtC1INGB0LDQudGC0LAsINC/0YDQtdC00L7RgtCy0YDQsNGJ0LXQvdC40Y4g0LzQvtGI0LXQvdC90LjRh9C10YHRgtCy0LAsINCy0LXQtNC10L3QuNGOINC00L7QutGD0LzQtdC90YLQsNGG0LjQuCDQuCDQt9Cw0YnQuNGC0LUg0L/RgNCw0LLQvtCy0YvRhSDRgtGA0LXQsdC+0LLQsNC90LjQuS48L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8c2VjdGlvbj4KICAgICAgICAgIDxoMj43LiDQmtC+0LzRgyDQvNC+0LPRg9GCINCx0YvRgtGMINC/0LXRgNC10LTQsNC90Ysg0LTQsNC90L3Ri9C1PC9oMj4KICAgICAgICAgIDxwPkJvb3N0IExpbmUg0L3QtSDQv9GA0L7QtNCw0ZHRgiDQuCDQvdC1INGB0LTQsNGR0YIg0L/QtdGA0YHQvtC90LDQu9GM0L3Ri9C1INC00LDQvdC90YvQtSDQsiDQsNGA0LXQvdC00YMuINCSINC90LXQvtCx0YXQvtC00LjQvNC+0Lwg0L7QsdGK0ZHQvNC1INC00LDQvdC90YvQtSDQvNC+0LPRg9GCINCx0YvRgtGMINC00L7RgdGC0YPQv9C90Ys6PC9wPgogICAgICAgICAgPHVsPgogICAgICAgICAgICA8bGk+0YHQvtGC0YDRg9C00L3QuNC60LDQvCDQuCDQv9C+0LTRgNGP0LTRh9C40LrQsNC8IEJvb3N0IExpbmUsINC60L7RgtC+0YDRi9C8INC40L3RhNC+0YDQvNCw0YbQuNGPINC90YPQttC90LAg0LTQu9GPINC+0LHRgNCw0LHQvtGC0LrQuCDQvtCx0YDQsNGJ0LXQvdC40Y8g0Lgg0L7QutCw0LfQsNC90LjRjyDRg9GB0LvRg9CzOzwvbGk+CiAgICAgICAgICAgIDxsaT7Qv9C+0YHRgtCw0LLRidC40LrQsNC8INGF0L7RgdGC0LjQvdCz0LAsINGC0LXQu9C10YTQvtC90L3QvtC5INGB0LLRj9C30LgsIFNNUywg0Y3Qu9C10LrRgtGA0L7QvdC90L7QuSDQv9C+0YfRgtGLLCBDUk0g0Lgg0YHRgNC10LTRgdGC0LIg0LHQtdC30L7Qv9Cw0YHQvdC+0YHRgtC4OzwvbGk+CiAgICAgICAgICAgIDxsaT7Qv9GA0L7RhNC10YHRgdC40L7QvdCw0LvRjNC90YvQvCDQutC+0L3RgdGD0LvRjNGC0LDQvdGC0LDQvCwg0LLQutC70Y7Rh9Cw0Y8g0Y7RgNC40YHRgtC+0LIg0Lgg0LHRg9GF0LPQsNC70YLQtdGA0L7Qsiwg0LrQvtCz0LTQsCDRjdGC0L4g0L3QtdC+0LHRhdC+0LTQuNC80L47PC9saT4KICAgICAgICAgICAgPGxpPtCz0L7RgdGD0LTQsNGA0YHRgtCy0LXQvdC90YvQvCDQvtGA0LPQsNC90LDQvCDQuNC70Lgg0LjQvdGL0Lwg0LvQuNGG0LDQvCwg0LXRgdC70Lgg0YDQsNGB0LrRgNGL0YLQuNC1INGC0YDQtdCx0YPQtdGC0YHRjyDQt9Cw0LrQvtC90L7QvCwg0YHRg9C00LXQsdC90YvQvCDQsNC60YLQvtC8INC70LjQsdC+INC90LXQvtCx0YXQvtC00LjQvNC+INC00LvRjyDQt9Cw0YnQuNGC0Ysg0LfQsNC60L7QvdC90YvRhSDQv9GA0LDQsiDQuCDQsdC10LfQvtC/0LDRgdC90L7RgdGC0LguPC9saT4KICAgICAgICAgIDwvdWw+CiAgICAgICAgICA8cD7Qn9C+0YHRgtCw0LLRidC40LrQuCDRg9GB0LvRg9CzINC/0L7Qu9GD0YfQsNGO0YIg0YLQvtC70YzQutC+INC00LDQvdC90YvQtSwg0L3QtdC+0LHRhdC+0LTQuNC80YvQtSDQtNC70Y8g0L/QvtGA0YPRh9C10L3QvdC+0Lkg0YTRg9C90LrRhtC40LgsINC4INC00L7Qu9C20L3RiyDQvtCx0YDQsNCx0LDRgtGL0LLQsNGC0Ywg0LjRhSDQsiDRgdC+0L7RgtCy0LXRgtGB0YLQstC40Lgg0YEg0LTQvtCz0L7QstC+0YDQvtC8INC4INC/0YDQuNC80LXQvdC40LzRi9C8INC30LDQutC+0L3QvtC00LDRgtC10LvRjNGB0YLQstC+0LwuPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+OC4g0KHRgtC+0YDQvtC90L3QuNC1INGB0LDQudGC0Ysg0Lgg0YHQtdGA0LLQuNGB0Ys8L2gyPgogICAgICAgICAgPHA+0J3QsCDRgdCw0LnRgtC1INC10YHRgtGMINGB0YHRi9C70LrQuCDQvdCwIFNtYXJ0Q3JlZGl0LCBXaGF0c0FwcCDQuCBJbnN0YWdyYW0uINCf0LXRgNC10YXQvtC0INC/0L4g0LLQvdC10YjQvdC10Lkg0YHRgdGL0LvQutC1INC+0LfQvdCw0YfQsNC10YIsINGH0YLQviDQstGLINC/0L7QutC40LTQsNC10YLQtSDRgdCw0LnRgiBCb29zdCBMaW5lLiDQnNGLINC90LUg0LrQvtC90YLRgNC+0LvQuNGA0YPQtdC8INC/0YDQsNCy0LjQu9CwINC60L7QvdGE0LjQtNC10L3RhtC40LDQu9GM0L3QvtGB0YLQuCDRjdGC0LjRhSDRgdC10YDQstC40YHQvtCyOyDQv9C10YDQtdC0INC/0LXRgNC10LTQsNGH0LXQuSDQtNCw0L3QvdGL0YUg0L7Qt9C90LDQutC+0LzRjNGC0LXRgdGMINGBINC40YUg0YPRgdC70L7QstC40Y/QvNC4LiDQn9Cw0YDRgtC90ZHRgNGB0LrQsNGPINGB0YHRi9C70LrQsCBTbWFydENyZWRpdCDQvNC+0LbQtdGCINC/0L7Qt9Cy0L7Qu9C40YLRjCDRgdC10YDQstC40YHRgyDQvtC/0YDQtdC00LXQu9C40YLRjCwg0YfRgtC+INC/0LXRgNC10YXQvtC0INCx0YvQuyDRgdC00LXQu9Cw0L0g0YEg0YHQsNC50YLQsCBCb29zdCBMaW5lLjwvcD4KICAgICAgICA8L3NlY3Rpb24+CgogICAgICAgIDxzZWN0aW9uPgogICAgICAgICAgPGgyPjkuINCl0YDQsNC90LXQvdC40LUg0LTQsNC90L3Ri9GFPC9oMj4KICAgICAgICAgIDxwPtCc0Ysg0YXRgNCw0L3QuNC8INC00LDQvdC90YvQtSDQvdC1INC00L7Qu9GM0YjQtSwg0YfQtdC8INGN0YLQviDQvdC10L7QsdGF0L7QtNC40LzQviDQtNC70Y8g0L7RgtCy0LXRgtCwINC90LAg0L7QsdGA0LDRidC10L3QuNC1LCDQv9GA0L7QstC10LTQtdC90LjRjyDQutC+0L3RgdGD0LvRjNGC0LDRhtC40LgsINC40YHQv9C+0LvQvdC10L3QuNGPINC00L7Qs9C+0LLQvtGA0LAsINCy0LXQtNC10L3QuNGPINC+0LHRj9C30LDRgtC10LvRjNC90L7QuSDQtNC10LvQvtCy0L7QuSDQtNC+0LrRg9C80LXQvdGC0LDRhtC40LgsINGA0LDQt9GA0LXRiNC10L3QuNGPINGB0L/QvtGA0L7QsiDQuCDRgdC+0LHQu9GO0LTQtdC90LjRjyDRgtGA0LXQsdC+0LLQsNC90LjQuSDQt9Cw0LrQvtC90LAuINCh0YDQvtC6INC+0L/RgNC10LTQtdC70Y/QtdGC0YHRjyDRhdCw0YDQsNC60YLQtdGA0L7QvCDQvtGC0L3QvtGI0LXQvdC40LksINC90LDQu9C40YfQuNC10Lwg0LTQtdC50YHRgtCy0YPRjtGJ0LXQs9C+INC00L7Qs9C+0LLQvtGA0LAsINGO0YDQuNC00LjRh9C10YHQutC40LzQuCDRgdGA0L7QutCw0LzQuCDRhdGA0LDQvdC10L3QuNGPINC4INC90LXQvtCx0YXQvtC00LjQvNC+0YHRgtGM0Y4g0LfQsNGJ0LjRgtGLINC+0YIg0L/RgNC10YLQtdC90LfQuNC5LiDQmtC+0LPQtNCwINGG0LXQu9GMINC00L7RgdGC0LjQs9C90YPRgtCwINC4INC/0YDQsNCy0L7QstGL0YUg0L7RgdC90L7QstCw0L3QuNC5INC00LvRjyDRhdGA0LDQvdC10L3QuNGPINCx0L7Qu9GM0YjQtSDQvdC10YIsINC00LDQvdC90YvQtSDRg9C00LDQu9GP0Y7RgtGB0Y8sINC+0LHQtdC30LvQuNGH0LjQstCw0Y7RgtGB0Y8g0LjQu9C4INCx0LXQt9C+0L/QsNGB0L3QviDRg9C90LjRh9GC0L7QttCw0Y7RgtGB0Y8uPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+MTAuINCa0LDQuiDQvNGLINC30LDRidC40YnQsNC10Lwg0LTQsNC90L3Ri9C1PC9oMj4KICAgICAgICAgIDxwPtCc0Ysg0L/RgNC40LzQtdC90Y/QtdC8INGA0LDQt9GD0LzQvdGL0LUg0LDQtNC80LjQvdC40YHRgtGA0LDRgtC40LLQvdGL0LUsINC+0YDQs9Cw0L3QuNC30LDRhtC40L7QvdC90YvQtSDQuCDRgtC10YXQvdC40YfQtdGB0LrQuNC1INC80LXRgNGLOiDQvtCz0YDQsNC90LjRh9C10L3QuNC1INC00L7RgdGC0YPQv9CwINC/0L4g0YHQu9GD0LbQtdCx0L3QvtC5INC90LXQvtCx0YXQvtC00LjQvNC+0YHRgtC4LCDQutC+0L3RgtGA0L7Qu9GMINGD0YfRkdGC0L3Ri9GFINC30LDQv9C40YHQtdC5LCDQuNGB0L/QvtC70YzQt9C+0LLQsNC90LjQtSDQt9Cw0YnQuNGJ0ZHQvdC90YvRhSDRgdC10YDQstC40YHQvtCyLCDQvtCx0YPRh9C10L3QuNC1INC70LjRhiDRgSDQtNC+0YHRgtGD0L/QvtC8INC6INC00LDQvdC90YvQvCDQuCDQsdC10LfQvtC/0LDRgdC90L7QtSDRg9C00LDQu9C10L3QuNC1INC40L3RhNC+0YDQvNCw0YbQuNC4LiDQn9GA0Lgg0Y3RgtC+0Lwg0L3QuCDQvtC00LjQvSDRgdC/0L7RgdC+0LEg0L/QtdGA0LXQtNCw0YfQuCDQuNC70Lgg0YXRgNCw0L3QtdC90LjRjyDQtNCw0L3QvdGL0YUg0L3QtSDQvNC+0LbQtdGCINCz0LDRgNCw0L3RgtC40YDQvtCy0LDRgtGMINCw0LHRgdC+0LvRjtGC0L3Rg9GOINCx0LXQt9C+0L/QsNGB0L3QvtGB0YLRjC48L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8c2VjdGlvbj4KICAgICAgICAgIDxoMj4xMS4g0JLQsNGI0Lgg0L/RgNCw0LLQsDwvaDI+CiAgICAgICAgICA8cD7QkiDQv9GA0LXQtNC10LvQsNGFINC/0YDQuNC80LXQvdC40LzQvtCz0L4g0LfQsNC60L7QvdC+0LTQsNGC0LXQu9GM0YHRgtCy0LAg0LLRiyDQvNC+0LbQtdGC0LU6PC9wPgogICAgICAgICAgPHVsPgogICAgICAgICAgICA8bGk+0YPQt9C90LDRgtGMLCDQvtCx0YDQsNCx0LDRgtGL0LLQsNC10Lwg0LvQuCDQvNGLINCy0LDRiNC4INC00LDQvdC90YvQtSwg0Lgg0LfQsNC/0YDQvtGB0LjRgtGMINC00L7RgdGC0YPQvyDQuiDQvdC40Lw7PC9saT4KICAgICAgICAgICAgPGxpPtC40YHQv9GA0LDQstC40YLRjCDQvdC10YLQvtGH0L3Ri9C1INC40LvQuCDQvdC10L/QvtC70L3Ri9C1INGB0LLQtdC00LXQvdC40Y87PC9saT4KICAgICAgICAgICAgPGxpPtC30LDQv9GA0L7RgdC40YLRjCDRg9C00LDQu9C10L3QuNC1INC00LDQvdC90YvRhTs8L2xpPgogICAgICAgICAgICA8bGk+0L7RgtC+0LfQstCw0YLRjCDRgNCw0L3QtdC1INC00LDQvdC90L7QtSDRgdC+0LPQu9Cw0YHQuNC1OzwvbGk+CiAgICAgICAgICAgIDxsaT7QstC+0LfRgNCw0LfQuNGC0Ywg0L/RgNC+0YLQuNCyINC+0L/RgNC10LTQtdC70ZHQvdC90YvRhSDQstC40LTQvtCyINC+0LHRgNCw0LHQvtGC0LrQuCDQuNC70Lgg0L/QvtC/0YDQvtGB0LjRgtGMINC+0LPRgNCw0L3QuNGH0LjRgtGMINC10ZE7PC9saT4KICAgICAgICAgICAgPGxpPtC/0L7Qu9GD0YfQuNGC0Ywg0L/QtdGA0LXQvdC+0YHQuNC80YPRjiDQutC+0L/QuNGOINC00LDQvdC90YvRhSwg0LrQvtCz0LTQsCDRgtCw0LrQvtC1INC/0YDQsNCy0L4g0L/RgNC40LzQtdC90Y/QtdGC0YHRjzs8L2xpPgogICAgICAgICAgICA8bGk+0L3QtSDQv9C+0LTQstC10YDQs9Cw0YLRjNGB0Y8g0LTQuNGB0LrRgNC40LzQuNC90LDRhtC40Lgg0LfQsCDRgNC10LDQu9C40LfQsNGG0LjRjiDQv9GA0LDQsiDQvdCwINC60L7QvdGE0LjQtNC10L3RhtC40LDQu9GM0L3QvtGB0YLRjC48L2xpPgogICAgICAgICAgPC91bD4KICAgICAgICAgIDxwPtCU0LvRjyDQt9Cw0L/RgNC+0YHQsCDQv9C+0LfQstC+0L3QuNGC0LUg0L/QviDQvdC+0LzQtdGA0YMgPGEgaHJlZj0idGVsOisxNTYxOTI4NTc4MCI+KzEgNTYxLTkyOC01NzgwPC9hPiDQuNC70Lgg0L3QsNC/0LjRiNC40YLQtSDQsiA8YSBocmVmPSJodHRwczovL3dhLm1lLzE1NjE5Mjg1NzgwIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+V2hhdHNBcHA8L2E+LiDQntC/0LjRiNC40YLQtSDQt9Cw0L/RgNC+0YEg0Lgg0YPQutCw0LbQuNGC0LUg0YHQv9C+0YHQvtCxINGB0LLRj9C30LguINCU0LvRjyDQt9Cw0YnQuNGC0Ysg0LTQsNC90L3Ri9GFINC80Ysg0LzQvtC20LXQvCDQv9C+0L/RgNC+0YHQuNGC0Ywg0L/QvtC00YLQstC10YDQtNC40YLRjCDQu9C40YfQvdC+0YHRgtGMLiDQldGB0LvQuCDQt9Cw0LrQvtC9INGA0LDQt9GA0LXRiNCw0LXRgiDQtNC10LnRgdGC0LLQvtCy0LDRgtGMINGH0LXRgNC10Lcg0YPQv9C+0LvQvdC+0LzQvtGH0LXQvdC90L7Qs9C+INC/0YDQtdC00YHRgtCw0LLQuNGC0LXQu9GPLCDQvNGLINC80L7QttC10Lwg0LfQsNC/0YDQvtGB0LjRgtGMINC/0L7QtNGC0LLQtdGA0LbQtNC10L3QuNC1INC10LPQviDQv9C+0LvQvdC+0LzQvtGH0LjQuS48L3A+CiAgICAgICAgPC9zZWN0aW9uPgoKICAgICAgICA8c2VjdGlvbj4KICAgICAgICAgIDxoMj4xMi4g0JTQtdGC0Lg8L2gyPgogICAgICAgICAgPHA+0KHQsNC50YIg0Lgg0YPRgdC70YPQs9C4INC90LUg0L/RgNC10LTQvdCw0LfQvdCw0YfQtdC90Ysg0LTQu9GPINC70LjRhiDQvNC70LDQtNGI0LUgMTgg0LvQtdGCLiDQnNGLINC90LUg0YHQvtCx0LjRgNCw0LXQvCDQt9Cw0LLQtdC00L7QvNC+INC/0LXRgNGB0L7QvdCw0LvRjNC90YvQtSDQtNCw0L3QvdGL0LUg0LTQtdGC0LXQuS4g0JXRgdC70Lgg0LLRiyDRgdGH0LjRgtCw0LXRgtC1LCDRh9GC0L4g0YDQtdCx0ZHQvdC+0Log0L/QtdGA0LXQtNCw0Lsg0L3QsNC8INC00LDQvdC90YvQtSwg0YHQstGP0LbQuNGC0LXRgdGMINGBINC90LDQvNC4INC00LvRjyDQv9GA0L7QstC10YDQutC4INC4INGD0LTQsNC70LXQvdC40Y8uPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+MTMuINCY0LfQvNC10L3QtdC90LjRjyDQv9C+0LvQuNGC0LjQutC4PC9oMj4KICAgICAgICAgIDxwPtCc0Ysg0LzQvtC20LXQvCDQvtCx0L3QvtCy0LvRj9GC0Ywg0Y3RgtGDINCf0L7Qu9C40YLQuNC60YMg0L/RgNC4INC40LfQvNC10L3QtdC90LjQuCDRg9GB0LvRg9CzLCDQv9GA0L7RhtC10YHRgdC+0LIg0LjQu9C4INGC0YDQtdCx0L7QstCw0L3QuNC5INC30LDQutC+0L3QsC4g0J3QvtCy0LDRjyDRgNC10LTQsNC60YbQuNGPINC/0YPQsdC70LjQutGD0LXRgtGB0Y8g0L3QsCDRjdGC0L7QuSDRgdGC0YDQsNC90LjRhtC1INGBINC+0LHQvdC+0LLQu9GR0L3QvdC+0Lkg0LTQsNGC0L7QuS4g0KHRg9GJ0LXRgdGC0LLQtdC90L3Ri9C1INC40LfQvNC10L3QtdC90LjRjyDQv9GA0LjQvNC10L3Rj9GO0YLRgdGPINGBINC80L7QvNC10L3RgtCwINC/0YPQsdC70LjQutCw0YbQuNC4INC40LvQuCDRgSDQuNC90L7QuSDRg9C60LDQt9Cw0L3QvdC+0Lkg0LTQsNGC0YsuPC9wPgogICAgICAgIDwvc2VjdGlvbj4KCiAgICAgICAgPHNlY3Rpb24+CiAgICAgICAgICA8aDI+MTQuINCa0L7QvdGC0LDQutGC0Ys8L2gyPgogICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFjdCI+CiAgICAgICAgICAgIDxwPjxzdHJvbmc+Qm9vc3QgTGluZTwvc3Ryb25nPjwvcD4KICAgICAgICAgICAgPHA+0KLQtdC70LXRhNC+0L06IDxhIGhyZWY9InRlbDorMTU2MTkyODU3ODAiPisxIDU2MS05MjgtNTc4MDwvYT48L3A+CiAgICAgICAgICAgIDxwPldoYXRzQXBwOiA8YSBocmVmPSJodHRwczovL3dhLm1lLzE1NjE5Mjg1NzgwIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+0L3QsNC/0LjRgdCw0YLRjCDRgdC+0L7QsdGJ0LXQvdC40LU8L2E+PC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9zZWN0aW9uPgogICAgICA8L2Rpdj4KICAgICAgPGEgY2xhc3M9InJldHVybiIgaHJlZj0iLi4vI2FwcGx5Ij7QktC10YDQvdGD0YLRjNGB0Y8g0Log0LfQsNGP0LLQutC1PC9hPgogICAgPC9kaXY+CiAgPC9tYWluPgo8L2JvZHk+CjwvaHRtbD4K">политику конфиденциальности</a>.</span>
+            </label>
+            <button class="submit" type="submit">Получить бесплатную консультацию</button>
+            <p class="apply-free-note">Консультация и разбор вашей кредитной истории полностью бесплатны.</p>
+            <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+        <p class="disclaimer">Boost Line предоставляет образовательную и консультационную помощь по вопросам кредитной истории и не является кредитным бюро или юридической фирмой. Гарантия распространяется на выполнение Boost Line этапов работы, закреплённых в договоре; решения по кредитным отчётам принимаются кредитными бюро и кредиторами независимо.</p>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="shell faq-wrap">
+        <div><h2>Коротко о главном</h2><p>Ответы на вопросы, которые обычно возникают до первой консультации.</p></div>
+        <div class="faq">
+          <div class="faq-item open">
+            <button class="faq-q" type="button" aria-expanded="true"><span>Зачем нужен кредитный отчёт до консультации?</span><span>+</span></button>
+            <div class="faq-a"><div><p>По отчёту мы видим записи всех основных бюро, можем предметно оценить ситуацию и определить первые шаги ещё на стартовом разборе.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button" aria-expanded="false"><span>Сколько времени занимает процесс?</span><span>+</span></button>
+            <div class="faq-a"><div><p>Многие получают результат уже в первые 30 дней, но все кейсы индивидуальны: у кого-то процесс занимает 15–30 дней, у кого-то 30–90 дней, а у кого-то — полгода и больше.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button" aria-expanded="false"><span>На что распространяется гарантия?</span><span>+</span></button>
+            <div class="faq-a"><div><p>На выполнение всех этапов работы, закреплённых за Boost Line в договоре. Если мы не выполним свою часть, вернём деньги.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button" aria-expanded="false"><span>Что нужно для первого разговора?</span><span>+</span></button>
+            <div class="faq-a"><div><p>Кратко опишите ситуацию, вашу цель и оставьте удобный номер телефона для связи.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <a class="mobile-cta" href="#apply">Оставить заявку</a>
+  <a class="whatsapp-float" href="https://wa.me/15619285780" target="_blank" rel="noopener" aria-label="Написать Boost Line в WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3.2A12.74 12.74 0 0 0 5.12 22.5L3.2 28.8l6.46-1.86a12.8 12.8 0 1 0 6.38-23.74Zm0 23.44a10.6 10.6 0 0 1-5.4-1.48l-.38-.22-3.83 1.1 1.02-3.73-.25-.39a10.63 10.63 0 1 1 8.84 4.72Zm5.83-7.95c-.32-.16-1.89-.93-2.18-1.04-.29-.1-.5-.16-.71.16-.21.32-.82 1.04-1 1.25-.19.21-.37.24-.69.08-.32-.16-1.34-.49-2.56-1.58a9.6 9.6 0 0 1-1.77-2.2c-.19-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.19.21-.32.32-.53.1-.21.05-.4-.03-.56-.08-.16-.71-1.72-.98-2.36-.26-.62-.52-.54-.71-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.11 1.09-1.11 2.65s1.14 3.07 1.3 3.28c.16.21 2.24 3.42 5.43 4.8.76.33 1.35.52 1.81.67.76.24 1.46.21 2 .13.61-.09 1.89-.77 2.16-1.51.27-.74.27-1.38.19-1.51-.08-.13-.29-.21-.61-.37Z"/></svg>
+  </a>
+
+  <script>
+    (function(){
+      var items=document.querySelectorAll('.faq-item');
+      items.forEach(function(item){
+        var btn=item.querySelector('.faq-q');
+        btn.addEventListener('click',function(){
+          var willOpen=!item.classList.contains('open');
+          items.forEach(function(other){ other.classList.remove('open'); other.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+          if(willOpen){ item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+        });
+      });
+
+      var reviewsFrame=document.getElementById('reviewsFrame');
+      var reviewsTrack=document.getElementById('reviewsTrack');
+      var reviewCards=Array.prototype.slice.call(document.querySelectorAll('.review-card'));
+      var reviewsPrev=document.getElementById('reviewsPrev');
+      var reviewsNext=document.getElementById('reviewsNext');
+      var reviewsProgress=document.getElementById('reviewsProgress');
+      var reviewIndex=0;
+      function visibleReviews(){
+        if(window.innerWidth<=620) return 1;
+        if(window.innerWidth<=900) return 2;
+        return 3;
+      }
+      function updateReviews(){
+        var visible=visibleReviews();
+        var maxIndex=Math.max(0,reviewCards.length-visible);
+        reviewIndex=Math.min(reviewIndex,maxIndex);
+        reviewsPrev.disabled=reviewIndex===0;
+        reviewsNext.disabled=reviewIndex===maxIndex;
+        var end=Math.min(reviewIndex+visible,reviewCards.length);
+        reviewsProgress.textContent=String(reviewIndex+1).padStart(2,'0')+'–'+String(end).padStart(2,'0')+' / '+reviewCards.length;
+        reviewCards.forEach(function(card,i){ card.hidden=i<reviewIndex||i>=end; });
+      }
+      reviewsPrev.addEventListener('click',function(){ reviewIndex=Math.max(0,reviewIndex-1); updateReviews(); });
+      reviewsNext.addEventListener('click',function(){ reviewIndex=Math.min(reviewCards.length-visibleReviews(),reviewIndex+1); updateReviews(); });
+      window.addEventListener('resize',updateReviews);
+      updateReviews();
+
+      var selected=[];
+      document.querySelectorAll('.chip').forEach(function(chip){
+        chip.addEventListener('click',function(){
+          chip.classList.toggle('selected');
+          var val=chip.textContent.trim();
+          if(chip.classList.contains('selected')){ if(selected.indexOf(val)<0) selected.push(val); }
+          else { selected=selected.filter(function(x){return x!==val;}); }
+        });
+      });
+
+      var form=document.getElementById('leadForm');
+      var status=document.getElementById('formStatus');
+      var phone=document.getElementById('phone');
+      var draft='';
+      function renderStatus(html){ status.innerHTML=html; status.classList.add('show'); }
+      function phoneDigits(value){
+        var digits=value.replace(/\D/g,'');
+        if(digits.length===11&&digits.charAt(0)==='1') digits=digits.slice(1);
+        return digits.slice(0,10);
+      }
+      function formatPhone(digits){
+        if(!digits) return '';
+        if(digits.length<4) return '('+digits;
+        if(digits.length<7) return '('+digits.slice(0,3)+') '+digits.slice(3);
+        return '('+digits.slice(0,3)+') '+digits.slice(3,6)+'-'+digits.slice(6);
+      }
+      phone.addEventListener('input',function(){ phone.value=formatPhone(phoneDigits(phone.value)); });
+      form.addEventListener('submit',function(e){
+        e.preventDefault();
+        var firstName=document.getElementById('firstName').value.trim();
+        var consent=document.getElementById('consent');
+        var digits=phoneDigits(phone.value);
+        if(!firstName){
+          renderStatus('<strong>Укажите имя.</strong>Это нужно, чтобы сформировать заявку.');
+          document.getElementById('firstName').focus();
+          return;
+        }
+        if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits)){
+          renderStatus('<strong>Проверьте номер телефона.</strong>После +1 должно быть 10 цифр корректного номера США.');
+          phone.focus();
+          return;
+        }
+        if(!consent.checked){
+          renderStatus('<strong>Нужно ваше согласие.</strong>Отметьте согласие на обработку данных, чтобы сформировать заявку.');
+          consent.focus();
+          return;
+        }
+        var fullPhone='+1 '+formatPhone(digits);
+        draft='Заявка на консультацию Boost Line\nИмя: '+firstName+'\nТелефон: '+fullPhone+'\nПроблема: '+(selected.length?selected.join(', '):'нужна первичная диагностика')+'\nСогласие на обработку данных: подтверждено';
+        renderStatus('<strong>Черновик заявки готов.</strong>Скопируйте или скачайте его, чтобы передать консультанту.<div class="status-actions"><button class="mini-btn" type="button" id="copyDraft">Скопировать</button><button class="mini-btn" type="button" id="downloadDraft">Скачать .txt</button></div>');
+        document.getElementById('copyDraft').addEventListener('click',function(){
+          navigator.clipboard.writeText(draft).then(function(){ document.getElementById('copyDraft').textContent='Скопировано'; }).catch(function(){ document.getElementById('copyDraft').textContent='Не удалось скопировать'; });
+        });
+        document.getElementById('downloadDraft').addEventListener('click',function(){
+          var blob=new Blob([draft],{type:'text/plain;charset=utf-8'});
+          var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='boost-line-request.txt'; a.click();
+          setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var svg=document.getElementById('ringSvg'),ticks=[],NS='http://www.w3.org/2000/svg';
+      for(var s=0;s<3;s++)for(var i=0;i<12;i++){
+        var r=document.createElementNS(NS,'rect');
+        r.setAttribute('x',-4.5);r.setAttribute('y',-96);r.setAttribute('width',9);r.setAttribute('height',24);r.setAttribute('rx',2);
+        r.setAttribute('transform','translate(100 100) rotate('+(s*120+i*9.6+6)+')');
+        r.setAttribute('class','tick');svg.appendChild(r);ticks.push(r);
+      }
+      var rows=document.querySelectorAll('.signal-row'),num=document.getElementById('stageNum'),lbl=document.getElementById('stageLbl');
+      var names=['Диагностика','Персональный план','Сопровождение'],timers=[];
+      var still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function later(f,t){timers.push(setTimeout(f,t));}
+      function reset(){ticks.forEach(function(t){t.classList.remove('on');});rows.forEach(function(r){r.classList.add('off');});num.textContent='0 / 3';lbl.textContent='старт';}
+      function cycle(){
+        reset();
+        for(var s=0;s<3;s++)(function(s){
+          var t0=500+s*2600;
+          for(var i=0;i<12;i++)(function(i){later(function(){ticks[s*12+i].classList.add('on');},t0+i*75);})(i);
+          later(function(){rows[s].classList.remove('off');num.textContent=(s+1)+' / 3';lbl.textContent=names[s];},t0+900);
+        })(s);
+        later(function(){num.textContent='3 шага';lbl.textContent='к результату';},500+2*2600+2200);
+        later(cycle,500+3*2600+2600);
+      }
+      if(still){ticks.forEach(function(t){t.classList.add('on');});rows.forEach(function(r){r.classList.remove('off');});}
+      else cycle();
+    })();
+  </script>
+</body>
+</html>
